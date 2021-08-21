@@ -19,7 +19,7 @@ jobs:
     steps:
     - name: Cancel previous runs on the same branch
       if: ${{ github.ref != 'refs/heads/main' }}
-      uses: styfle/cancel-workflow-action@0.9.1
+      uses: styfle/cancel-workflow-action@0.9.0
       with:
         access_token: ${{ github.token }}
 
@@ -52,12 +52,12 @@ jobs:
 
     - name: Lint source with flake8
       run: |
-        flake8 chia tests
+        flake8 cryptodoge tests
 
     - name: Lint source with mypy
       run: |
         mypy --exclude config.py tests
-        mypy chia
+        mypy cryptodoge
 
     - name: Build source distribution
       run: |

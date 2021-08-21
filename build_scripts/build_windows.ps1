@@ -2,85 +2,89 @@
 
 $ErrorActionPreference = "Stop"
 
-mkdir build_scripts\win_build
-Set-Location -Path ".\build_scripts\win_build" -PassThru
+mkdir win_build
+Set-Location -Path ".\win_build" -PassThru
 
 git status
 
 Write-Output "   ---"
 Write-Output "curl miniupnpc"
 Write-Output "   ---"
-Invoke-WebRequest -Uri "https://pypi.chia.net/simple/miniupnpc/miniupnpc-2.2.2-cp39-cp39-win_amd64.whl" -OutFile "miniupnpc-2.2.2-cp39-cp39-win_amd64.whl"
-Write-Output "Using win_amd64 python 3.9 wheel from https://github.com/miniupnp/miniupnp/pull/475 (2.2.0-RC1)"
-Write-Output "Actual build from https://github.com/miniupnp/miniupnp/commit/7783ac1545f70e3341da5866069bde88244dd848"
-If ($LastExitCode -gt 0){
-    Throw "Failed to download miniupnpc!"
-}
-else
-{
-    Set-Location -Path - -PassThru
-    Write-Output "miniupnpc download successful."
-}
+Invoke-WebRequest -Uri "https://pypi.chia.net/simple/miniupnpc/miniupnpc-2.1-cp37-cp37m-win_amd64.whl" -OutFile "miniupnpc-2.1-cp37-cp37m-win_amd64.whl"
+Write-Output "Using win_amd64 python 3.7 wheel from https://github.com/miniupnp/miniupnp/pull/475 (2.2.0-RC1)"
+# If ($LastExitCode -gt 0){
+#     Throw "Failed to download miniupnpc!"
+# }
+# else
+# {
+#     Set-Location -Path - -PassThru
+#     Write-Output "miniupnpc download successful."
+# }
 
 Write-Output "   ---"
-Write-Output "Create venv - python3.9 is required in PATH"
+Write-Output "Create venv - python3.7 or 3.8 is required in PATH"
 Write-Output "   ---"
 python -m venv venv
 . .\venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install wheel pep517
+Write-Output "   -1--"
+#python -m pip install --upgrade pip
+pip install pip==18.1 --user 
+Write-Output "   --2-"
+pip install whl pep517
+Write-Output "   -3--"
 pip install pywin32
-pip install pyinstaller==4.5
+Write-Output "   -4--"
+pip install pyinstaller==4.2
+Write-Output "   --5-"
 pip install setuptools_scm
 
 Write-Output "   ---"
-Write-Output "Get CHIA_INSTALLER_VERSION"
-# The environment variable CHIA_INSTALLER_VERSION needs to be defined
-$env:CHIA_INSTALLER_VERSION = python .\build_scripts\installer-version.py -win
+Write-Output "Get CRYPTODOGE_INSTALLER_VERSION"
+# The environment variable CRYPTODOGE_INSTALLER_VERSION needs to be defined
+$env:CRYPTODOGE_INSTALLER_VERSION = python D:\cryptodoge\build_scripts\installer-version.py -win
 
-if (-not (Test-Path env:CHIA_INSTALLER_VERSION)) {
-  $env:CHIA_INSTALLER_VERSION = '0.0.0'
-  Write-Output "WARNING: No environment variable CHIA_INSTALLER_VERSION set. Using 0.0.0"
+if (-not (Test-Path env:CRYPTODOGE_INSTALLER_VERSION)) {
+  $env:CRYPTODOGE_INSTALLER_VERSION = '0.0.0'
+  Write-Output "WARNING: No environment variable CRYPTODOGE_INSTALLER_VERSION set. Using 0.0.0"
   }
-Write-Output "Chia Version is: $env:CHIA_INSTALLER_VERSION"
+Write-Output "Cryptodoge Version is: $env:CRYPTODOGE_INSTALLER_VERSION"
 Write-Output "   ---"
 
 Write-Output "   ---"
-Write-Output "Build chia-blockchain wheels"
+Write-Output "Build cryptodoge wheels"
 Write-Output "   ---"
-pip wheel --use-pep517 --extra-index-url https://pypi.chia.net/simple/ -f . --wheel-dir=.\build_scripts\win_build .
+pip wheel --use-pep517 --extra-index-url https://pypi.chia.net/simple/ -f . --wheel-dir=.\win_build D:\cryptodoge
 
 Write-Output "   ---"
-Write-Output "Install chia-blockchain wheels into venv with pip"
+Write-Output "Install cryptodoge wheels into venv with pip"
 Write-Output "   ---"
 
 Write-Output "pip install miniupnpc"
-Set-Location -Path ".\build_scripts" -PassThru
-pip install --no-index --find-links=.\win_build\ miniupnpc
+#Set-Location -Path ".\build_scripts" -PassThru
+pip install --no-index --find-links=. miniupnpc
 # Write-Output "pip install setproctitle"
 # pip install setproctitle==1.2.2
 
-Write-Output "pip install chia-blockchain"
-pip install --no-index --find-links=.\win_build\ chia-blockchain
+Write-Output "pip install cryptodoge"
+pip install --no-index --find-links=.\win_build\ cryptodoge
 
 Write-Output "   ---"
-Write-Output "Use pyinstaller to create chia .exe's"
+Write-Output "Use pyinstaller to create cryptodoge .exe's"
 Write-Output "   ---"
-$SPEC_FILE = (python -c 'import chia; print(chia.PYINSTALLER_SPEC_PATH)') -join "`n"
+$SPEC_FILE = (python -c 'import cryptodoge; print(cryptodoge.PYINSTALLER_SPEC_PATH)') -join "`n"
 pyinstaller --log-level INFO $SPEC_FILE
 
 Write-Output "   ---"
-Write-Output "Copy chia executables to chia-blockchain-gui\"
+Write-Output "Copy cryptodoge executables to cryptodoge-gui\"
 Write-Output "   ---"
-Copy-Item "dist\daemon" -Destination "..\chia-blockchain-gui\" -Recurse
-Set-Location -Path "..\chia-blockchain-gui" -PassThru
+Copy-Item "D:\cryptodoge\build_scripts\win_build\dist\daemon" -Destination "D:\cryptodoge\cryptodoge-gui\" -Recurse
+Set-Location -Path "D:\cryptodoge\cryptodoge-gui" -PassThru
 
 git status
 
 Write-Output "   ---"
 Write-Output "Prepare Electron packager"
 Write-Output "   ---"
-$Env:NODE_OPTIONS = "--max-old-space-size=3000"
 npm install --save-dev electron-winstaller
 npm install -g electron-packager
 npm install
@@ -97,19 +101,19 @@ If ($LastExitCode -gt 0){
 }
 
 Write-Output "   ---"
-Write-Output "Increase the stack for chia command for (chia plots create) chiapos limitations"
+Write-Output "Increase the stack for cryptodoge command for (cryptodoge plots create) chiapos limitations"
 # editbin.exe needs to be in the path
-editbin.exe /STACK:8000000 daemon\chia.exe
+D:\cryptodoge\cryptodoge-gui\editbin.exe /STACK:8000000 D:\cryptodoge\cryptodoge-gui\daemon\cryptodoge.exe
 Write-Output "   ---"
 
-$packageVersion = "$env:CHIA_INSTALLER_VERSION"
-$packageName = "Chia-$packageVersion"
+$packageVersion = "$env:CRYPTODOGE_INSTALLER_VERSION"
+$packageName = "Cryptodoge-$packageVersion"
 
 Write-Output "packageName is $packageName"
 
 Write-Output "   ---"
 Write-Output "electron-packager"
-electron-packager . Chia --asar.unpack="**\daemon\**" --overwrite --icon=.\src\assets\img\chia.ico --app-version=$packageVersion
+electron-packager . Cryptodoge --asar.unpack="**\daemon\**" --overwrite --icon=.\src\assets\img\cryptodoge.ico --app-version=$packageVersion
 Write-Output "   ---"
 
 Write-Output "   ---"
@@ -123,8 +127,8 @@ If ($env:HAS_SECRET) {
    Write-Output "   ---"
    Write-Output "Add timestamp and verify signature"
    Write-Output "   ---"
-   signtool.exe timestamp /v /t http://timestamp.comodoca.com/ .\release-builds\windows-installer\ChiaSetup-$packageVersion.exe
-   signtool.exe verify /v /pa .\release-builds\windows-installer\ChiaSetup-$packageVersion.exe
+   signtool.exe timestamp /v /t http://timestamp.comodoca.com/ .\release-builds\windows-installer\CryptodogeSetup-$packageVersion.exe
+   signtool.exe verify /v /pa .\release-builds\windows-installer\CryptodogeSetup-$packageVersion.exe
    }   Else    {
    Write-Output "Skipping timestamp and verify signatures - no authorization to install certificates"
 }

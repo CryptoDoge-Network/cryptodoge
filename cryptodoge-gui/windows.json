@@ -1,0 +1,5 @@
+{
+  "dest": "dist/installers/",
+  "icon": "src/assets/img/cryptodoge.ico",
+  "tags": ["Blockchain"]
+}

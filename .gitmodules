@@ -1,8 +1,8 @@
-[submodule "chia-blockchain-gui"]
-	path = chia-blockchain-gui
-	url = https://github.com/Chia-Network/chia-blockchain-gui.git
+[submodule "cryptodoge-gui"]
+	path = cryptodoge-gui
+	url = https://github.com/Cryptodoge-Network/cryptodoge/cryptodoge-gui.git
 	branch = pools
 [submodule "mozilla-ca"]
 	path = mozilla-ca
-	url = https://github.com/Chia-Network/mozilla-ca.git
+	url = https://github.com/Cryptodoge-Network/mozilla-ca.git
         branch = main

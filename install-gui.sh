@@ -4,17 +4,17 @@ export NODE_OPTIONS="--max-old-space-size=3000"
 
 
 if [ -z "$VIRTUAL_ENV" ]; then
-  echo "This requires the chia python virtual environment."
+  echo "This requires the cryptodoge python virtual environment."
   echo "Execute '. ./activate' before running."
 	exit 1
 fi
 
 if [ "$(id -u)" = 0 ]; then
-  echo "The Chia Blockchain GUI can not be installed or run by the root user."
+  echo "The Cryptodoge GUI can not be installed or run by the root user."
 	exit 1
 fi
 
-# Allows overriding the branch or commit to build in chia-blockchain-gui
+# Allows overriding the branch or commit to build in Cryptodoge-gui
 SUBMODULE_BRANCH=$1
 
 UBUNTU=false
@@ -25,20 +25,20 @@ if [ "$(uname)" = "Linux" ]; then
 		# Debian/Ubuntu
 		UBUNTU=true
 		sudo apt-get install -y npm nodejs libxss1
-	elif type yum &&  [ ! -f "/etc/redhat-release" ] && [ ! -f "/etc/centos-release" ] && [ ! -f /etc/rocky-release ] && [ ! -f /etc/fedora-release ]; then
+	elif type yum &&  [ ! -f "/etc/redhat-release" ] && [ ! -f "/etc/centos-release" ] && [ ! -f /etc/rocky-release ]; then
 		# AMZN 2
 		echo "Installing on Amazon Linux 2."
 		curl -sL https://rpm.nodesource.com/setup_12.x | sudo bash -
 		sudo yum install -y nodejs
-	elif type yum && [ ! -f /etc/rocky-release ] && [ ! -f /etc/fedora-release ] && [ -f /etc/redhat-release ] || [ -f /etc/centos-release ]; then
+	elif type yum && [ ! -f /etc/rocky-release ] && [ -f /etc/redhat-release ] || [ -f /etc/centos-release ]; then
 		# CentOS or Redhat
 		echo "Installing on CentOS/Redhat."
 		curl -sL https://rpm.nodesource.com/setup_12.x | sudo bash -
 		sudo yum install -y nodejs
-	elif type yum && [ -f /etc/rocky-release ] || [ -f /etc/fedora-release ]; then
+	elif type yum && [ -f /etc/rocky-release ]; then
                 # RockyLinux
-                echo "Installing on RockyLinux/Fedora"
-                sudo dnf module enable nodejs:12
+                echo "Installing on RockyLinux"
+                dnf module enable nodejs:12
                 sudo dnf install -y nodejs
         fi
 
@@ -76,11 +76,12 @@ fi
 if [ ! "$CI" ]; then
 	echo "Running git submodule update --init --recursive."
 	echo ""
-	git submodule update --init --recursive
+	#chris evan return
+	#git submodule update --init --recursive
 	echo "Running git submodule update."
 	echo ""
-	git submodule update
-	cd chia-blockchain-gui
+	#git submodule update
+	cd cryptodoge-gui
 
 	if [ "$SUBMODULE_BRANCH" ];
 	then
@@ -95,12 +96,11 @@ if [ ! "$CI" ]; then
 	npm install
 	npm audit fix || true
 	npm run build
-	python ../installhelper.py
 else
 	echo "Skipping node.js in install.sh on MacOS ci."
 fi
 
 echo ""
-echo "Chia blockchain install-gui.sh completed."
+echo "Cryptodoge install-gui.sh completed."
 echo ""
-echo "Type 'cd chia-blockchain-gui' and then 'npm run electron &' to start the GUI."
+echo "Type 'cd cryptodoge-gui' and then 'npm run electron &' to start the GUI."

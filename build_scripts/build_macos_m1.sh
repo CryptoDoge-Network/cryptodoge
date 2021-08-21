@@ -3,41 +3,49 @@
 set -euo pipefail
 
 pip install setuptools_scm
-# The environment variable CHIA_INSTALLER_VERSION needs to be defined.
+# The environment variable CRYPTODOGE_INSTALLER_VERSION needs to be defined.
 # If the env variable NOTARIZE and the username and password variables are
 # set, this will attempt to Notarize the signed DMG.
-CHIA_INSTALLER_VERSION=$(python installer-version.py)
+CRYPTODOGE_INSTALLER_VERSION=$(python installer-version.py)
 
-if [ ! "$CHIA_INSTALLER_VERSION" ]; then
-	echo "WARNING: No environment variable CHIA_INSTALLER_VERSION set. Using 0.0.0."
-	CHIA_INSTALLER_VERSION="0.0.0"
+if [ ! "$CRYPTODOGE_INSTALLER_VERSION" ]; then
+	echo "WARNING: No environment variable CRYPTODOGE_INSTALLER_VERSION set. Using 0.0.0."
+	CRYPTODOGE_INSTALLER_VERSION="0.0.0"
 fi
-echo "Chia Installer Version is: $CHIA_INSTALLER_VERSION"
+echo "Cryptodoge Installer Version is: $CRYPTODOGE_INSTALLER_VERSION"
 
 echo "Installing npm and electron packagers"
 npm install electron-installer-dmg -g
 npm install electron-packager -g
 npm install electron/electron-osx-sign -g
-npm install @chia-network/notarize-cli -g
+npm install notarize-cli -g
 
 echo "Create dist/"
 sudo rm -rf dist
 mkdir dist
 
 echo "Install pyinstaller and build bootloaders for M1"
-pip install pyinstaller==4.5
+#pip install pyinstaller==4.3
+# Once there is a 4.4, we can clone that tag and build that
+# M1 support isn't in a tag yet.
+# Alternatively, if the m1 bootloaders are distributed with pip in the future, can just use those
+git clone https://github.com/pyinstaller/pyinstaller.git
+cd pyinstaller/bootloader
+python ./waf all
+pip install ..
+cd ../..
 
 echo "Create executables with pyinstaller"
-SPEC_FILE=$(python -c 'import chia; print(chia.PYINSTALLER_SPEC_PATH)')
+SPEC_FILE=$(python -c 'import cryptodoge; print(cryptodoge.PYINSTALLER_SPEC_PATH)')
 pyinstaller --log-level=INFO "$SPEC_FILE"
 LAST_EXIT_CODE=$?
 if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	echo >&2 "pyinstaller failed!"
 	exit $LAST_EXIT_CODE
 fi
-cp -r dist/daemon ../chia-blockchain-gui
+cp -r dist/daemon ../cryptodoge-gui
 cd .. || exit
-cd chia-blockchain-gui || exit
+cd cryptodoge-gui || exit
 
 echo "npm build"
 npm install
@@ -49,9 +57,9 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	exit $LAST_EXIT_CODE
 fi
 
-electron-packager . Chia --asar.unpack="**/daemon/**" --platform=darwin \
---icon=src/assets/img/Chia.icns --overwrite --app-bundle-id=net.chia.blockchain \
---appVersion=$CHIA_INSTALLER_VERSION
+electron-packager . cryptodoge --asar.unpack="**/daemon/**" --platform=darwin \
+--icon=src/assets/img/cryptodoge.icns --overwrite --app-bundle-id=net.cryptodoge.blockchain \
+--appVersion=$CRYPTODOGE_INSTALLER_VERSION
 LAST_EXIT_CODE=$?
 if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	echo >&2 "electron-packager failed!"
@@ -59,7 +67,7 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 fi
 
 if [ "$NOTARIZE" ]; then
-  electron-osx-sign Chia-darwin-arm64/Chia.app --platform=darwin \
+  electron-osx-sign Chia-darwin-arm64/cryptodoge.app --platform=darwin \
   --hardened-runtime=true --provisioning-profile=chiablockchain.provisionprofile \
   --entitlements=entitlements.mac.plist --entitlements-inherit=entitlements.mac.plist \
   --no-gatekeeper-assess
@@ -73,10 +81,10 @@ fi
 mv Chia-darwin-arm64 ../build_scripts/dist/
 cd ../build_scripts || exit
 
-DMG_NAME="Chia-$CHIA_INSTALLER_VERSION-arm64.dmg"
+DMG_NAME="Cryptodoge-$CRYPTODOGE_INSTALLER_VERSION-arm64.dmg"
 echo "Create $DMG_NAME"
 mkdir final_installer
-electron-installer-dmg dist/Chia-darwin-arm64/Chia.app Chia-$CHIA_INSTALLER_VERSION-arm64 \
+electron-installer-dmg dist/Chia-darwin-arm64/cryptodoge.app Cryptodoge-$CRYPTODOGE_INSTALLER_VERSION-arm64 \
 --overwrite --out final_installer
 LAST_EXIT_CODE=$?
 if [ "$LAST_EXIT_CODE" -ne 0 ]; then

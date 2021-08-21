@@ -19,7 +19,7 @@ You can visit our [Trello project board](https://trello.com/b/ZuNx7sET) to get a
 Generally, things to the left are in progress or done. Some things go through "Coming up soon", but some will come directly out of other columns.
 Usually, the things closer to the top of each column are the ones that will be worked on soonest.
 If you are interested in cryptography, math, or just like hacking in python, there are many interesting problems to work on.
-Contact any of the team members on [Keybase](https://keybase.io/team/chia_network.public), which we use as the main communication method. You can also comment on any Trello card.
+Contact any of the team members on [Discord](https://discord.gg/invite/qK2x5zFUNx), which we use as the main communication method. You can also comment on any Trello card.
 
 We ask that external contributors create a fork of the `main` branch for any feature work they wish to take on.
 
@@ -48,8 +48,7 @@ In the event an emergency fix is required for the release version of Chia, membe
 The first time the tests are run, BlockTools will create and persist many plots. These are used for creating
 proofs of space during testing. The next time tests are run, this will not be necessary.
 
-```bash
-. ./activate
+```bash. ./activate
 pip install ".[dev]"
 black chia tests && mypy chia tests && flake8 chia tests
 py.test tests -v --durations 0
@@ -60,16 +59,6 @@ The [flake8 library](https://readthedocs.org/projects/flake8/) helps ensure cons
 The [Mypy library](https://mypy.readthedocs.io/en/stable/) is very useful for ensuring objects are of the correct type, so try to always add the type of the return value, and the type of local variables.
 
 If you want verbose logging for tests, edit the `tests/pytest.ini` file.
-
-## Pre-Commit
-
-We provide a [pre-commit configuration](https://github.com/Chia-Network/chia-blockchain/blob/main/.pre-commit-config.yaml) which triggers several useful
-hooks (including linters/formatter) before each commit you make if you installed and set up [pre-commit](https://pre-commit.com/). This will help
-to reduce the time you spend on failed CI jobs.
-
-To install pre-commit on your system see https://pre-commit.com/#installation. After installation, you can either use it manually
-with `pre-commit run` or let it trigger the hooks automatically before each commit by installing the
-provided configuration with `pre-commit install`.
 
 ## Configure VS code
 
@@ -96,14 +85,14 @@ workflow.
 
 ## Testnets and review environments
 
-With the launch of `1.0.0` we will begin running an official `testnet`.
+With the launch of `1.0.0` we will begin running an official `testnet`.  
 Prior to the release of `1.1.0` there will be two running test nets. `testnet` and `transaction-beta-testnet`. The `transaction-beta-testnet` testnet will be a beta of the pending 1.1 release, which will enable transactions on the chia blockchain.
 Following the release of `1.1.0`, the official `testnet` will include all changes that have been accepted to the current release branch.
 
 Prior to proposing changes to `main`, proposers should consider if running a `beta testnet` review environment will make the reviewer more effective when evaluating a change.
 Changes that impact the blockchain could require a review environment before acceptance into `main`. This is at the discretion of the reviewer.
 Chia organization members have been granted CI access to deploy `beta testnets`.
-If you are not a Chia organization member, you can enquire about deploying a `beta testnet` in the public dev Keybase channel.
+If you are not a Chia organization member, you can enquire about deploying a `beta testnet` in the public dev Discord channel.
 
 ## Submit changes
 

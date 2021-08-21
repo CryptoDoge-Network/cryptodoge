@@ -1,21 +1,19 @@
 from setuptools import setup
 
 dependencies = [
-    "blspy==1.0.5",  # Signature library
+    "blspy==1.0.2",  # Signature library
     "chiavdf==1.0.2",  # timelord and vdf verification
     "chiabip158==1.0",  # bip158-style wallet filters
-    "chiapos==1.0.4",  # proof of space
+    "chiapos==1.0.3",  # proof of space
     "clvm==0.9.7",
-    "clvm_rs==0.1.10",
+    "clvm_rs==0.1.8",
     "clvm_tools==0.4.3",
     "aiohttp==3.7.4",  # HTTP server for full node rpc
     "aiosqlite==0.17.0",  # asyncio wrapper for sqlite, to store blocks
-    "bitstring==3.1.9",  # Binary data management library
-    "colorama==0.4.4",  # Colorizes terminal output
+    "bitstring==3.1.7",  # Binary data management library
     "colorlog==5.0.1",  # Adds color to logs
     "concurrent-log-handler==0.9.19",  # Concurrently log and rotate logs
     "cryptography==3.4.7",  # Python cryptography library for TLS - keyring conflict
-    "fasteners==0.16.3",  # For interprocess file locking
     "keyring==23.0.1",  # Store keys in MacOS Keychain, Windows Credential Locker
     "keyrings.cryptfile==1.3.4",  # Secure storage for keys on Linux (Will be replaced)
     #  "keyrings.cryptfile==1.3.8",  # Secure storage for keys on Linux (Will be replaced)
@@ -26,7 +24,6 @@ dependencies = [
     "websockets==8.1.0",  # For use in wallet RPC and electron UI
     "click==7.1.2",  # For the CLI
     "dnspython==2.1.0",  # Query DNS seeds
-    "watchdog==2.1.3",  # Filesystem event watching - watches keyring.yaml
 ]
 
 upnp_dependencies = [
@@ -44,14 +41,14 @@ dev_dependencies = [
 ]
 
 kwargs = dict(
-    name="chia-blockchain",
-    author="Mariano Sorgente",
-    author_email="mariano@chia.net",
-    description="Chia blockchain full node, farmer, timelord, and wallet.",
-    url="https://chia.net/",
+    name="cryptodoge",
+    author="Chris Evan",
+    author_email="dev@cryptodoge.cc",
+    description="Cryptodoge full node, farmer, timelord, and wallet.",
+    url="https://cryptodoge.cc/",
     license="Apache License",
     python_requires=">=3.7, <4",
-    keywords="chia blockchain node",
+    keywords="cryptodoge node",
     install_requires=dependencies,
     setup_requires=["setuptools_scm"],
     extras_require=dict(
@@ -61,54 +58,54 @@ kwargs = dict(
     ),
     packages=[
         "build_scripts",
-        "chia",
-        "chia.cmds",
-        "chia.clvm",
-        "chia.consensus",
-        "chia.daemon",
-        "chia.full_node",
-        "chia.timelord",
-        "chia.farmer",
-        "chia.harvester",
-        "chia.introducer",
-        "chia.plotting",
-        "chia.pools",
-        "chia.protocols",
-        "chia.rpc",
-        "chia.server",
-        "chia.simulator",
-        "chia.types.blockchain_format",
-        "chia.types",
-        "chia.util",
-        "chia.wallet",
-        "chia.wallet.puzzles",
-        "chia.wallet.rl_wallet",
-        "chia.wallet.cc_wallet",
-        "chia.wallet.did_wallet",
-        "chia.wallet.settings",
-        "chia.wallet.trading",
-        "chia.wallet.util",
-        "chia.ssl",
+        "cryptodoge",
+        "cryptodoge.cmds",
+        "cryptodoge.clvm",
+        "cryptodoge.consensus",
+        "cryptodoge.daemon",
+        "cryptodoge.full_node",
+        "cryptodoge.timelord",
+        "cryptodoge.farmer",
+        "cryptodoge.harvester",
+        "cryptodoge.introducer",
+        "cryptodoge.plotting",
+        "cryptodoge.pools",
+        "cryptodoge.protocols",
+        "cryptodoge.rpc",
+        "cryptodoge.server",
+        "cryptodoge.simulator",
+        "cryptodoge.types.blockchain_format",
+        "cryptodoge.types",
+        "cryptodoge.util",
+        "cryptodoge.wallet",
+        "cryptodoge.wallet.puzzles",
+        "cryptodoge.wallet.rl_wallet",
+        "cryptodoge.wallet.cc_wallet",
+        "cryptodoge.wallet.did_wallet",
+        "cryptodoge.wallet.settings",
+        "cryptodoge.wallet.trading",
+        "cryptodoge.wallet.util",
+        "cryptodoge.ssl",
         "mozilla-ca",
     ],
     entry_points={
         "console_scripts": [
-            "chia = chia.cmds.chia:main",
-            "chia_wallet = chia.server.start_wallet:main",
-            "chia_full_node = chia.server.start_full_node:main",
-            "chia_harvester = chia.server.start_harvester:main",
-            "chia_farmer = chia.server.start_farmer:main",
-            "chia_introducer = chia.server.start_introducer:main",
-            "chia_timelord = chia.server.start_timelord:main",
-            "chia_timelord_launcher = chia.timelord.timelord_launcher:main",
-            "chia_full_node_simulator = chia.simulator.start_simulator:main",
+            "cryptodoge = cryptodoge.cmds.cryptodoge:main",
+            "cryptodoge_wallet = cryptodoge.server.start_wallet:main",
+            "cryptodoge_full_node = cryptodoge.server.start_full_node:main",
+            "cryptodoge_harvester = cryptodoge.server.start_harvester:main",
+            "cryptodoge_farmer = cryptodoge.server.start_farmer:main",
+            "cryptodoge_introducer = cryptodoge.server.start_introducer:main",
+            "cryptodoge_timelord = cryptodoge.server.start_timelord:main",
+            "cryptodoge_timelord_launcher = cryptodoge.timelord.timelord_launcher:main",
+            "cryptodoge_full_node_simulator = cryptodoge.simulator.start_simulator:main",
         ]
     },
     package_data={
-        "chia": ["pyinstaller.spec"],
-        "": ["*.clvm", "*.clvm.hex", "*.clib", "*.clinc", "*.clsp", "py.typed"],
-        "chia.util": ["initial-*.yaml", "english.txt"],
-        "chia.ssl": ["chia_ca.crt", "chia_ca.key", "dst_root_ca.pem"],
+        "cryptodoge": ["pyinstaller.spec"],
+        "cryptodoge.wallet.puzzles": ["*.clvm", "*.clvm.hex"],
+        "cryptodoge.util": ["initial-*.yaml", "english.txt"],
+        "cryptodoge.ssl": ["cryptodoge_ca.crt", "cryptodoge_ca.key", "dst_root_ca.pem"],
         "mozilla-ca": ["cacert.pem"],
     },
     use_scm_version={"fallback_version": "unknown-no-.git-directory"},
