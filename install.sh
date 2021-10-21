@@ -18,14 +18,14 @@ fi
 if [ "$(uname -m)" = "armv7l" ]; then
   echo ""
 	echo "WARNING:"
-	echo "The Cryptodoge requires a 64 bit OS and this is 32 bit armv7l"
+	echo "The Cryptodoge Blockchain requires a 64 bit OS and this is 32 bit armv7l"
 	echo "For more information, see"
 	echo "https://github.com/Cryptodoge-Network/cryptodoge/wiki/Raspberry-Pi"
 	echo "Exiting."
 	exit 1
 fi
-# Get submodules Chris Evan return
-#git submodule update --init mozilla-ca
+# Get submodules
+git submodule update --init mozilla-ca
 
 UBUNTU_PRE_2004=false
 if $UBUNTU; then
@@ -82,7 +82,7 @@ fi
 find_python() {
 	set +e
 	unset BEST_VERSION
-	for V in 37 3.7 38 3.8 39 3.9 3; do
+	for V in 39 3.9 38 3.8 37 3.7 3; do
 		if which python$V >/dev/null; then
 			if [ "$BEST_VERSION" = "" ]; then
 				BEST_VERSION=$V

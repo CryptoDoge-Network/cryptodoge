@@ -1,7 +1,4 @@
 #!/bin/bash
-
-. ../activate
-
 pip install setuptools_scm
 # The environment variable CRYPTODOGE_INSTALLER_VERSION needs to be defined.
 # If the env variable NOTARIZE and the username and password variables are

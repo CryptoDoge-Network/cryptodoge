@@ -2,9 +2,9 @@ import asyncio
 
 import pytest
 
-from chia.protocols.protocol_message_types import ProtocolMessageTypes
-from chia.server.outbound_message import make_msg
-from chia.server.rate_limits import RateLimiter, NON_TX_FREQ
+from cryprotdoge.protocols.protocol_message_types import ProtocolMessageTypes
+from cryprotdoge.server.outbound_message import make_msg
+from cryprotdoge.server.rate_limits import RateLimiter, NON_TX_FREQ
 from tests.setup_nodes import test_constants
 
 

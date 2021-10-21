@@ -1,47 +1,40 @@
-# $env:path should contain a path to editbin.exe and signtool.exe
-
 $ErrorActionPreference = "Stop"
 
-mkdir win_build
-Set-Location -Path ".\win_build" -PassThru
+mkdir build_scripts\win_build
+Set-Location -Path ".\build_scripts\win_build" -PassThru
 
 git status
 
 Write-Output "   ---"
 Write-Output "curl miniupnpc"
 Write-Output "   ---"
-Invoke-WebRequest -Uri "https://pypi.chia.net/simple/miniupnpc/miniupnpc-2.1-cp37-cp37m-win_amd64.whl" -OutFile "miniupnpc-2.1-cp37-cp37m-win_amd64.whl"
-Write-Output "Using win_amd64 python 3.7 wheel from https://github.com/miniupnp/miniupnp/pull/475 (2.2.0-RC1)"
-# If ($LastExitCode -gt 0){
-#     Throw "Failed to download miniupnpc!"
-# }
-# else
-# {
-#     Set-Location -Path - -PassThru
-#     Write-Output "miniupnpc download successful."
-# }
+Invoke-WebRequest -Uri "https://pypi.chia.net/simple/miniupnpc/miniupnpc-2.2.2-cp39-cp39-win_amd64.whl" -OutFile "miniupnpc-2.2.2-cp39-cp39-win_amd64.whl"
+Write-Output "Using win_amd64 python 3.9 wheel from https://github.com/miniupnp/miniupnp/pull/475 (2.2.0-RC1)"
+Write-Output "Actual build from https://github.com/miniupnp/miniupnp/commit/7783ac1545f70e3341da5866069bde88244dd848"
+If ($LastExitCode -gt 0){
+    Throw "Failed to download miniupnpc!"
+}
+else
+{
+    Set-Location -Path - -PassThru
+    Write-Output "miniupnpc download successful."
+}
 
 Write-Output "   ---"
-Write-Output "Create venv - python3.7 or 3.8 is required in PATH"
+Write-Output "Create venv - python3.9 is required in PATH"
 Write-Output "   ---"
 python -m venv venv
 . .\venv\Scripts\Activate.ps1
-Write-Output "   -1--"
-#python -m pip install --upgrade pip
-pip install pip==18.1 --user 
-Write-Output "   --2-"
-pip install whl pep517
-Write-Output "   -3--"
+python -m pip install --upgrade pip
+pip install wheel pep517
 pip install pywin32
-Write-Output "   -4--"
 pip install pyinstaller==4.2
-Write-Output "   --5-"
 pip install setuptools_scm
 
 Write-Output "   ---"
 Write-Output "Get CRYPTODOGE_INSTALLER_VERSION"
 # The environment variable CRYPTODOGE_INSTALLER_VERSION needs to be defined
-$env:CRYPTODOGE_INSTALLER_VERSION = python D:\cryptodoge\build_scripts\installer-version.py -win
+$env:CRYPTODOGE_INSTALLER_VERSION = python .\build_scripts\installer-version.py -win
 
 if (-not (Test-Path env:CRYPTODOGE_INSTALLER_VERSION)) {
   $env:CRYPTODOGE_INSTALLER_VERSION = '0.0.0'
@@ -53,15 +46,15 @@ Write-Output "   ---"
 Write-Output "   ---"
 Write-Output "Build cryptodoge wheels"
 Write-Output "   ---"
-pip wheel --use-pep517 --extra-index-url https://pypi.chia.net/simple/ -f . --wheel-dir=.\win_build D:\cryptodoge
+pip wheel --use-pep517 --extra-index-url https://pypi.chia.net/simple/ -f . --wheel-dir=.\build_scripts\win_build .
 
 Write-Output "   ---"
 Write-Output "Install cryptodoge wheels into venv with pip"
 Write-Output "   ---"
 
 Write-Output "pip install miniupnpc"
-#Set-Location -Path ".\build_scripts" -PassThru
-pip install --no-index --find-links=. miniupnpc
+Set-Location -Path ".\build_scripts" -PassThru
+pip install --no-index --find-links=.\win_build\ miniupnpc
 # Write-Output "pip install setproctitle"
 # pip install setproctitle==1.2.2
 
@@ -77,14 +70,15 @@ pyinstaller --log-level INFO $SPEC_FILE
 Write-Output "   ---"
 Write-Output "Copy cryptodoge executables to cryptodoge-gui\"
 Write-Output "   ---"
-Copy-Item "D:\cryptodoge\build_scripts\win_build\dist\daemon" -Destination "D:\cryptodoge\cryptodoge-gui\" -Recurse
-Set-Location -Path "D:\cryptodoge\cryptodoge-gui" -PassThru
+Copy-Item "dist\daemon" -Destination "..\cryptodoge-gui\" -Recurse
+Set-Location -Path "..\cryptodoge-gui" -PassThru
 
 git status
 
 Write-Output "   ---"
 Write-Output "Prepare Electron packager"
 Write-Output "   ---"
+$Env:NODE_OPTIONS = "--max-old-space-size=3000"
 npm install --save-dev electron-winstaller
 npm install -g electron-packager
 npm install
@@ -103,7 +97,7 @@ If ($LastExitCode -gt 0){
 Write-Output "   ---"
 Write-Output "Increase the stack for cryptodoge command for (cryptodoge plots create) chiapos limitations"
 # editbin.exe needs to be in the path
-D:\cryptodoge\cryptodoge-gui\editbin.exe /STACK:8000000 D:\cryptodoge\cryptodoge-gui\daemon\cryptodoge.exe
+editbin.exe /STACK:8000000 daemon\cryptodoge.exe
 Write-Output "   ---"
 
 $packageVersion = "$env:CRYPTODOGE_INSTALLER_VERSION"
@@ -113,7 +107,7 @@ Write-Output "packageName is $packageName"
 
 Write-Output "   ---"
 Write-Output "electron-packager"
-electron-packager . Cryptodoge --asar.unpack="**\daemon\**" --overwrite --icon=.\src\assets\img\cryptodoge.ico --app-version=$packageVersion
+electron-packager . cryptodoge --asar.unpack="**\daemon\**" --overwrite --icon=.\src\assets\img\cryptodoge.ico --app-version=$packageVersion
 Write-Output "   ---"
 
 Write-Output "   ---"

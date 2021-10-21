@@ -4,6 +4,7 @@ min_mainnet_k_size: 32
 ping_interval: 120
 self_hostname: &self_hostname "localhost"
 daemon_port: 57690
+daemon_max_message_size: 50000000 # maximum size of RPC message in bytes
 inbound_rate_limit_percent: 100
 outbound_rate_limit_percent: 30
 
@@ -24,7 +25,6 @@ network_overrides: &network_overrides
       MIN_PLOT_SIZE: 18
       GENESIS_CHALLENGE: cb1a2ef31f47e5b59f97c85f07c9132a700d9f4aeaa4e02b5bdc97eda60a0fac
       NETWORK_TYPE: 1
-      INITIAL_FREEZE_PERIOD: 100
       DIFFICULTY_CONSTANT_FACTOR: 10052721566054
       GENESIS_PRE_FARM_POOL_PUZZLE_HASH: "6c6d79b2647de1d77bb40e1e7793d8a07f7fe243c6d289ed70ea3460d0ceff40"
       GENESIS_PRE_FARM_FARMER_PUZZLE_HASH: "6c6d79b2647de1d77bb40e1e7793d8a07f7fe243c6d289ed70ea3460d0ceff40"
@@ -41,7 +41,6 @@ network_overrides: &network_overrides
       GENESIS_CHALLENGE: cb1a2ef31f47e5b59f97c85f07c9132a700d9f4aeaa4e02b5bdc97eda60a0fac
       GENESIS_PRE_FARM_FARMER_PUZZLE_HASH: 6c6d79b2647de1d77bb40e1e7793d8a07f7fe243c6d289ed70ea3460d0ceff40
       GENESIS_PRE_FARM_POOL_PUZZLE_HASH: 6c6d79b2647de1d77bb40e1e7793d8a07f7fe243c6d289ed70ea3460d0ceff40
-      INITIAL_FREEZE_END_TIMESTAMP: 1618776900  # Sun Apr 18 2021 16:15:00 GMT-0400 (Eastern Daylight Time)
       MIN_PLOT_SIZE: 18
       NETWORK_TYPE: 1
       MEMPOOL_BLOCK_BUFFER: 10
@@ -52,18 +51,21 @@ network_overrides: &network_overrides
       GENESIS_CHALLENGE: cb1a2ef31f47e5b59f97c85f07c9132a700d9f4aeaa4e02b5bdc97eda60a0fac
       GENESIS_PRE_FARM_FARMER_PUZZLE_HASH: 6c6d79b2647de1d77bb40e1e7793d8a07f7fe243c6d289ed70ea3460d0ceff40
       GENESIS_PRE_FARM_POOL_PUZZLE_HASH: 6c6d79b2647de1d77bb40e1e7793d8a07f7fe243c6d289ed70ea3460d0ceff40
-      INITIAL_FREEZE_END_TIMESTAMP: 1618869600  # Mon Apr 19 2021 18:00:00 GMT-0400 (Eastern Daylight Time)
       MIN_PLOT_SIZE: 18
       NETWORK_TYPE: 1
       MEMPOOL_BLOCK_BUFFER: 10
       EPOCH_BLOCKS: 768
       DIFFICULTY_STARTING: 30
     testnet7:
+      DIFFICULTY_CONSTANT_FACTOR: 10052721566054
       GENESIS_CHALLENGE: cb1a2ef31f47e5b59f97c85f07c9132a700d9f4aeaa4e02b5bdc97eda60a0fac
       GENESIS_PRE_FARM_FARMER_PUZZLE_HASH: 6c6d79b2647de1d77bb40e1e7793d8a07f7fe243c6d289ed70ea3460d0ceff40
       GENESIS_PRE_FARM_POOL_PUZZLE_HASH: 6c6d79b2647de1d77bb40e1e7793d8a07f7fe243c6d289ed70ea3460d0ceff40
+      MIN_PLOT_SIZE: 18
       NETWORK_TYPE: 1
-    
+      MEMPOOL_BLOCK_BUFFER: 10
+      EPOCH_BLOCKS: 768
+      DIFFICULTY_STARTING: 30
   config:
     mainnet:
       address_prefix: "xcd"
@@ -81,7 +83,6 @@ network_overrides: &network_overrides
     testnet7:
       address_prefix: "txcd"
       default_full_node_port: 56899
-
 
 selected_network: &selected_network "mainnet"
 ALERTS_URL: https://download.cryptodoge.cc/notify/mainnet_alert.txt
@@ -124,7 +125,15 @@ harvester:
   start_rpc_server: True
   rpc_port: 16790
   num_threads: 30
-  plot_loading_frequency_seconds: 120
+  plots_refresh_parameter:
+    interval_seconds: 120 # The interval in seconds to refresh the plot file manager
+    retry_invalid_seconds: 1200 # How long to wait before re-trying plots which failed to load
+    batch_size: 300 # How many plot files the harvester processes before it waits batch_sleep_milliseconds
+    batch_sleep_milliseconds: 1 # Milliseconds the harvester sleeps between batch processing
+
+
+  # If True use parallel reads in chiapos
+  parallel_read: True
 
   logging: *logging
   network_overrides: *network_overrides
@@ -188,6 +197,7 @@ farmer:
 # Don't run this unless you want to run VDF clients on the local machine.
 timelord_launcher:
   # The server where the VDF clients will connect to.
+  host: *self_hostname
   port: 16690
   # Number of VDF client processes to keep alive in the local machine.
   process_count: 3
@@ -266,6 +276,8 @@ full_node:
 
   # How often to initiate outbound connections to other full nodes.
   peer_connect_interval: 30
+  # How long to wait for a peer connection
+  peer_connect_timeout: 30
   # Accept peers until this number of connections
   target_peer_count: 80
   # Initiate outbound connections until this number is hit.
@@ -294,6 +306,10 @@ full_node:
   # when enabled, the full node will print a pstats profile to the root_dir/profile every second
   # analyze with cryptodoge/utils/profiler.py
   enable_profiler: False
+
+  # this is a debug and profiling facility that logs all SQLite commands to a
+  # separate log file (under logging/sql.log).
+  log_sqlite_cmds: False
 
   # List of trusted DNS seeders to bootstrap from.
   # If you modify this, please change the hardcode as well from FullNode.set_server()

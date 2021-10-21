@@ -6,9 +6,9 @@ from pathlib import Path
 import aiosqlite
 import pytest
 
-from chia.server.address_manager import AddressManager, ExtendedPeerInfo
-from chia.server.address_manager_store import AddressManagerStore
-from chia.types.peer_info import PeerInfo, TimestampedPeerInfo
+from cryprotdoge.server.address_manager import AddressManager, ExtendedPeerInfo
+from cryprotdoge.server.address_manager_store import AddressManagerStore
+from cryprotdoge.types.peer_info import PeerInfo, TimestampedPeerInfo
 
 
 @pytest.fixture(scope="module")
@@ -361,7 +361,7 @@ class TestPeerManager:
     async def test_addrman_new_bucket(self):
         t_peer1 = TimestampedPeerInfo("250.1.2.1", 15994, 0)
         source1 = PeerInfo("250.1.2.1", 15994)
-        t_peer2 = TimestampedPeerInfo("250.1.2.1", 15994, 0)
+        t_peer2 = TimestampedPeerInfo("250.1.2.1", 9999, 0)
         peer_info1 = ExtendedPeerInfo(t_peer1, source1)
         # Test: Make sure key actually randomizes bucket placement. A fail on
         # this test could be a security issue.

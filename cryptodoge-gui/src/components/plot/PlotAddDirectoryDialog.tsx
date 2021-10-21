@@ -45,6 +45,11 @@ export default function PlotAddDirectoryDialog(props: Props) {
     onClose();
   }
 
+  function handleDialogClose(event: any, reason: any) {
+    if (reason !== 'backdropClick' || reason !== 'EscapeKeyDown') {
+      onClose();
+    }}
+
   function removePlotDir(dir: string) {
     dispatch(remove_plot_directory_and_refresh(dir));
   }
@@ -58,8 +63,7 @@ export default function PlotAddDirectoryDialog(props: Props) {
 
   return (
     <Dialog
-      disableBackdropClick
-      disableEscapeKeyDown
+      onClose={handleDialogClose}
       maxWidth="md"
       aria-labelledby="confirmation-dialog-title"
       open={open}
@@ -70,7 +74,8 @@ export default function PlotAddDirectoryDialog(props: Props) {
       <DialogContent dividers>
         <Typography>
           <Trans>
-            This allows you to add a directory that has plots in it. If you have not created any plots, go to the plotting screen.If can't see plots after add,click refresh plots.
+            This allows you to add a directory that has plots in it. If you have
+            not created any plots, go to the plotting screen.
           </Trans>
         </Typography>
         <Box display="flex">

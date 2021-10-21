@@ -11,7 +11,7 @@ from cryptodoge.types.blockchain_format.coin import Coin
 from cryptodoge.types.blockchain_format.program import Program
 from cryptodoge.types.blockchain_format.sized_bytes import bytes32
 from cryptodoge.types.spend_bundle import SpendBundle
-from cryptodoge.types.coin_solution import CoinSolution
+from cryptodoge.types.coin_spend import CoinSpend
 from cryptodoge.util.byte_types import hexstr_to_bytes
 from cryptodoge.util.db_wrapper import DBWrapper
 from cryptodoge.util.hash import std_hash
@@ -360,14 +360,14 @@ class TradeManager:
         if trade_offer is not None:
             offer_spend_bundle: SpendBundle = trade_offer.spend_bundle
 
-        coinsols: List[CoinSolution] = []  # [] of CoinSolutions
-        cc_coinsol_outamounts: Dict[bytes32, List[Tuple[CoinSolution, int]]] = dict()
+        coinsols: List[CoinSpend] = []  # [] of CoinSpends
+        cc_coinsol_outamounts: Dict[bytes32, List[Tuple[CoinSpend, int]]] = dict()
         aggsig = offer_spend_bundle.aggregated_signature
         cc_discrepancies: Dict[bytes32, int] = dict()
         cryptodoge_discrepancy = None
         wallets: Dict[bytes32, Any] = dict()  # colour to wallet dict
 
-        for coinsol in offer_spend_bundle.coin_solutions:
+        for coinsol in offer_spend_bundle.coin_spends:
             puzzle: Program = Program.from_bytes(bytes(coinsol.puzzle_reveal))
             solution: Program = Program.from_bytes(bytes(coinsol.solution))
 
@@ -409,12 +409,12 @@ class TradeManager:
 
         cryptodoge_spend_bundle: Optional[SpendBundle] = None
         if cryptodoge_discrepancy is not None:
-            cryptodoge_spend_bundle = await self.wallet_state_manager.main_wallet.create_spend_bundle_relative_chia(
+            cryptodoge_spend_bundle = await self.wallet_state_manager.main_wallet.create_spend_bundle_relative_cryptodoge(
                 cryptodoge_discrepancy, []
             )
             if cryptodoge_spend_bundle is not None:
                 for coinsol in coinsols:
-                    cryptodoge_spend_bundle.coin_solutions.append(coinsol)
+                    cryptodoge_spend_bundle.coin_spends.append(coinsol)
 
         zero_spend_list: List[SpendBundle] = []
         spend_bundle = None

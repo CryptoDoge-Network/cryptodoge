@@ -7,7 +7,7 @@ _blocks_per_year = 1681920  # 32 * 6 * 24 * 365
 
 def calculate_pool_reward(height: uint32) -> uint64:
     """
-    Returns the pool reward at a certain block height. The pool earns 5/8 of the reward in each block. If the farmer
+    Returns the pool reward at a certain block height. The pool earns 7/8 of the reward in each block. If the farmer
     is solo farming, they act as the pool, and therefore earn the entire block reward.
     These halving events will not be hit at the exact times
     (3 years, etc), due to fluctuations in difficulty. They will likely come early, if the network space and VDF

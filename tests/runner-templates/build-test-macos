@@ -1,3 +1,6 @@
+#
+# THIS FILE IS GENERATED. SEE https://github.com/Cryprotdoge-Network/cryprotdoge-blockchain/tree/main/tests#readme
+#
 name: MacOS TEST_NAME Tests
 
 on:
@@ -39,6 +42,13 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Create keychain for CI use
+      run: |
+        security create-keychain -p foo cryprotdogechain
+        security default-keychain -s cryprotdogechain
+        security unlock-keychain -p foo cryprotdogechain
+        security set-keychain-settings -t 7200 -u cryprotdogechain
+
     - name: Get pip cache dir
       id: pip-cache
       run: |
@@ -58,9 +68,9 @@ CHECKOUT_TEST_BLOCKS_AND_PLOTS
     - name: Link home directory
       run: |
         cd $HOME
-        ln -s $GITHUB_WORKSPACE/.chia
-        echo "$HOME/.chia"
-        ls -al $HOME/.chia
+        ln -s $GITHUB_WORKSPACE/.cryprotdoge
+        echo "$HOME/.cryprotdoge"
+        ls -al $HOME/.cryprotdoge
 
     - name: Run install script
       env:
@@ -80,4 +90,7 @@ INSTALL_TIMELORD
     - name: Test TEST_NAME code with pytest
       run: |
         . ./activate
-        ./venv/bin/py.test TEST_DIR -s -v --durations 0 PYTEST_PARALLEL_ARGS
+        ./venv/bin/py.test TEST_DIR -s -v --durations 0PYTEST_PARALLEL_ARGS
+#
+# THIS FILE IS GENERATED. SEE https://github.com/Cryprotdoge-Network/cryprotdoge-blockchain/tree/main/tests#readme
+#

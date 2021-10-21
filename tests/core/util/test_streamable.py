@@ -6,17 +6,19 @@ import io
 from clvm_tools import binutils
 from pytest import raises
 
-from chia.protocols.wallet_protocol import RespondRemovals
-from chia.types.blockchain_format.coin import Coin
-from chia.types.blockchain_format.program import Program
-from chia.types.blockchain_format.sized_bytes import bytes32
-from chia.types.full_block import FullBlock
-from chia.types.weight_proof import SubEpochChallengeSegment
-from chia.util.ints import uint8, uint32
-from chia.util.streamable import (
+from cryprotdoge.protocols.wallet_protocol import RespondRemovals
+from cryprotdoge.types.blockchain_format.coin import Coin
+from cryprotdoge.types.blockchain_format.program import Program
+from cryprotdoge.types.blockchain_format.sized_bytes import bytes32
+from cryprotdoge.types.full_block import FullBlock
+from cryprotdoge.types.weight_proof import SubEpochChallengeSegment
+from cryprotdoge.util.ints import uint8, uint32
+from cryprotdoge.util.streamable import (
     Streamable,
     streamable,
     parse_bool,
+    parse_uint32,
+    write_uint32,
     parse_optional,
     parse_bytes,
     parse_list,
@@ -217,6 +219,34 @@ class TestStreamable(unittest.TestCase):
 
         with raises(ValueError):
             parse_bool(io.BytesIO(b"\x02"))
+
+    def test_uint32(self):
+        assert parse_uint32(io.BytesIO(b"\x00\x00\x00\x00")) == 0
+        assert parse_uint32(io.BytesIO(b"\x00\x00\x00\x01")) == 1
+        assert parse_uint32(io.BytesIO(b"\x00\x00\x00\x01"), "little") == 16777216
+        assert parse_uint32(io.BytesIO(b"\x01\x00\x00\x00")) == 16777216
+        assert parse_uint32(io.BytesIO(b"\x01\x00\x00\x00"), "little") == 1
+        assert parse_uint32(io.BytesIO(b"\xff\xff\xff\xff"), "little") == 4294967295
+
+        def test_write(value, byteorder):
+            f = io.BytesIO()
+            write_uint32(f, uint32(value), byteorder)
+            f.seek(0)
+            assert parse_uint32(f, byteorder) == value
+
+        test_write(1, "big")
+        test_write(1, "little")
+        test_write(4294967295, "big")
+        test_write(4294967295, "little")
+
+        with raises(AssertionError):
+            parse_uint32(io.BytesIO(b""))
+        with raises(AssertionError):
+            parse_uint32(io.BytesIO(b"\x00"))
+        with raises(AssertionError):
+            parse_uint32(io.BytesIO(b"\x00\x00"))
+        with raises(AssertionError):
+            parse_uint32(io.BytesIO(b"\x00\x00\x00"))
 
     def test_parse_optional(self):
         assert parse_optional(io.BytesIO(b"\x00"), parse_bool) is None

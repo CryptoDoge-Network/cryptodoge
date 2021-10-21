@@ -65,7 +65,7 @@ export default function FarmLatestBlockChallenges() {
           *Want to explore Cryptodoge’s blocks further? Check out{' '}
           <Link
             color="primary"
-            href="https://www.cryptodogeexplorer.com/"
+            href="https://alltheblocks.net/cryptodoge/"
             target="_blank"
           >
             Cryptodoge Explorer

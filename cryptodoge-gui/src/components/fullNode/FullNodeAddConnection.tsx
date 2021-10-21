@@ -77,7 +77,7 @@ export default function FullNodeAddConnection(props: Props) {
               variant="filled"
             />
             <TextField
-              label={<Trans>Port(Cryptodog's default port is 15994)</Trans>}
+              label={<Trans>Port</Trans>}
               name="port"
               type="number"
               variant="filled"

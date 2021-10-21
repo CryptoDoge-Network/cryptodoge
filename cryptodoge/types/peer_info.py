@@ -5,6 +5,7 @@ from typing import Optional, Union
 from cryptodoge.util.ints import uint16, uint64
 from cryptodoge.util.streamable import Streamable, streamable
 
+
 @dataclass(frozen=True)
 @streamable
 class PeerInfo(Streamable):
@@ -13,7 +14,6 @@ class PeerInfo(Streamable):
 
     def is_valid(self, allow_private_subnets=False) -> bool:
         ip: Optional[Union[ipaddress.IPv6Address, ipaddress.IPv4Address]] = None
-
         try:
             ip = ipaddress.IPv6Address(self.host)
         except ValueError:

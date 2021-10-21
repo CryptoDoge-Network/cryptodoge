@@ -1675,7 +1675,7 @@ msgid "These plots are invalid, you might want to delete them."
 msgstr ""
 
 #: src/components/plot/PlotAddDirectoryDialog.tsx:44
-msgid "This allows you to add a directory that has plots in it. If you have not created any plots, go to the plotting screen.If can't see plots after add,click refresh plots."
+msgid "This allows you to add a directory that has plots in it. If you have not created any plots, go to the plotting screen."
 msgstr ""
 
 #: src/components/trading/CreateOffer.jsx:132
