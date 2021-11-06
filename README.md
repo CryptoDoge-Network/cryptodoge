@@ -3,8 +3,6 @@
 ![Alt text](https://cryptodoge.cc/assets/img/cryptodoge.png)
 
 
-Cryptodoge is an open source peer-to-peer digital currency, created by chia project former developer and shiba community,favored by Shiba Inus worldwide.
-
 Cryptodoge, a digital currency based on an open source, peer-to-peer internet protocol, is created by the former crypto exhange developers in collaboration with the Shiba community that globally famous for Shiba Inu. One block of Cryptodoge is generated in about 10 minutes, and halved every three years. In the first year, each block generates 20000 Cryptodoge, and it will be halved to 10000 coins for the next three year. This model will run about 30 years and experience 9 halvings. From the 31st to 99th year, each block generates a constant 50 coins, and after the 100th year, block rewards becomes 0. The total amount of Cryptodoge created will then remain constant at about 200 billion XCD.
 
 
