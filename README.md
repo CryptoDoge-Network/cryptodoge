@@ -3,9 +3,7 @@
 ![Alt text](https://cryptodoge.cc/assets/img/cryptodoge.png)
 
 
-Cryptodoge is an open source peer-to-peer digital currency, created by chia project former developer and shiba community,favored by Shiba Inus worldwide.
-
-Cryptodoge, a digital currency based on an open source, peer-to-peer internet protocol, is created by the former developers of the Chia project in collaboration with Shiba community that globally famous for Shiba Inu. One block of Cryptodoge is generated in about 10 minutes, and halved in every three years. In the first year, each block generate 20000 Cryptodoges, and it will be halved to 10000 coins at next third years, this model will run about 30 years and experience 9 halves. From the 31st to 99th year, each block generate constant 50 coins, and after the 100th year, block reward becomes 0. The total amount of Cryptodoge is finally constant about 200 billion.
+Cryptodoge, a digital currency based on an open source, peer-to-peer internet protocol, is created by the former crypto exhange developers in collaboration with the Shiba community that globally famous for Shiba Inu. One block of Cryptodoge is generated in about 10 minutes, and halved every three years. In the first year, each block generates 20000 Cryptodoge, and it will be halved to 10000 coins for the next three year. This model will run about 30 years and experience 9 halvings. From the 31st to 99th year, each block generates a constant 50 coins, and after the 100th year, block rewards becomes 0. The total amount of Cryptodoge created will then remain constant at about 200 billion XCD.
 
 
 
@@ -17,7 +15,7 @@ section of the
 [cryptodoge repository wiki](https://github.com/Cryptodoge-Network/cryptodoge/wiki).
 
 ## Announcement
-Hey @all great farmers of ChiaDogecoin,cryptodoge coin has been successfully upgraded from chiadoge coin,please farm ahead to cryptodoge.If you had farm on chiadoge before,you can get 2X amount cryptodoge coins.please fill your address (Make sure it is the same on cryptodge and chiadoge)in this google form (If you had filled it, please don't fill it again)
+Hi great farmers of ChiaDogecoin,cryptodoge coin has been successfully upgraded from chiadoge coin,please farm ahead to cryptodoge.If you had farm on chiadoge before,you can get 2X amount cryptodoge coins.please fill your address (Make sure it is the same on cryptodge and chiadoge)in this google form (If you had filled it, please don't fill it again)
 
 https://docs.google.com/forms/d/e/1FAIpQLSfpVeKf0YFEkZFCbRXIsUF8VB84kdszwhRv2tEJkLrPDa2upA/viewform
 and you can check send progress in this form
@@ -32,14 +30,14 @@ A crypto faucet is an app or a website that distributes small amounts of cryptoc
 
 ## RoadMap
 
-The total amount of cryptodoge is a constant, almost 200,000,000,000.halving every 3 years,detail see:
+The total amount of cryptodoge increases slowly over time and will reach almost 200,000,000,000.  There is a schedule for halving every 3 years for 9 times and then the XCD output decreases.  For details see:
 [Official website](https://cryptodoge.cc).
 What's next step for Cryptodoge? 
-1.mapped on Ethereum for liquidity mining
+1. Wallet application
 2.Large-scale airdrop to the community
-3.be listed on exchange
+3.Top 30 exchange listing
 4.NFT art
-7.Cooperate with GameFi team
+5.Cooperate with GameFi team
 
 etc
 
