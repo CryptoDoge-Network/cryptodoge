@@ -87,7 +87,7 @@ cd ../../../build_scripts || exit
 if [ "$REDHAT_PLATFORM" = "x86_64" ]; then
 	echo "Create cryptodoge-$CRYPTODOGE_INSTALLER_VERSION.rpm"
 
-	# Disables build links from the generated rpm so that we dont conflict with other packages. See https://github.com/Cryptodoge-Network/cryptodoge/issues/3846
+	# Disables build links from the generated rpm so that we dont conflict with other packages. See https://github.com/CryptoDoge-Network/cryptodoge/issues/3846
 	# shellcheck disable=SC2086
 	sed -i '1s/^/%define _build_id_links none\n%global _enable_debug_package 0\n%global debug_package %{nil}\n%global __os_install_post \/usr\/lib\/rpm\/brp-compress %{nil}\n/' "$GLOBAL_NPM_ROOT/electron-installer-redhat/resources/spec.ejs"
 

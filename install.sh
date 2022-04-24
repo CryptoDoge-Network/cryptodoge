@@ -48,7 +48,7 @@ if [ "$(uname -m)" = "armv7l" ]; then
   echo "WARNING:"
   echo "The Cryptodoge Blockchain requires a 64 bit OS and this is 32 bit armv7l"
   echo "For more information, see"
-  echo "https://github.com/Cryptodoge-Network/cryptodoge/wiki/Raspberry-Pi"
+  echo "https://github.com/CryptoDoge-Network/cryptodoge/wiki/Raspberry-Pi"
   echo "Exiting."
   exit 1
 fi
@@ -284,7 +284,7 @@ echo "For assistance join us on discord in the #support chat channel:"
 echo "https://discord.gg/invite/qK2x5zFUNx"
 echo ""
 echo "Try the Quick Start Guide to running cryptodoge:"
-echo "https://github.com/Cryptodoge-Network/cryptodoge/wiki/Quick-Start-Guide"
+echo "https://github.com/CryptoDoge-Network/cryptodoge/wiki/Quick-Start-Guide"
 echo ""
 echo "To install the GUI type 'sh install-gui.sh' after '. ./activate'."
 echo ""

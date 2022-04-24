@@ -1,7 +1,7 @@
     - name: Checkout test blocks and plots
       uses: actions/checkout@v2
       with:
-        repository: 'Cryptodoge-Network/test-cache'
+        repository: 'CryptoDoge-Network/test-cache'
         path: '.cryptodoge'
         ref: '0.28.0'
         fetch-depth: 1

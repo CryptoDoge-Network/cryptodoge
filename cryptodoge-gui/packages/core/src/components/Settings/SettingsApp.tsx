@@ -40,7 +40,7 @@ export default function SettingsApp(props: SettingsAppProps) {
   async function handleOpenFAQURL(): Promise<void> {
     try {
       const shell: Shell = (window as any).shell;
-      await shell.openExternal('https://github.com/Cryptodoge-Network/cryptodoge/wiki/FAQ');
+      await shell.openExternal('https://github.com/CryptoDoge-Network/cryptodoge/wiki/FAQ');
     } catch (error: any) {
       showError(error);
     }

@@ -144,7 +144,7 @@ def install_bladebit(root_path):
                 "git",
                 "clone",
                 "--recursive",
-                "https://github.com/Cryptodoge-Network/bladebit.git",
+                "https://github.com/CryptoDoge-Network/bladebit.git",
             ],
             "Could not clone bladebit repository",
             cwd=os.fspath(root_path),

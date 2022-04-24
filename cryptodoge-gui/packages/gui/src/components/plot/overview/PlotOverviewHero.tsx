@@ -36,7 +36,7 @@ export default function PlotOverviewHero() {
               }
               <Link
                 target="_blank"
-                href="https://github.com/Cryptodoge-Network/cryptodoge/wiki/Network-Architecture"
+                href="https://github.com/CryptoDoge-Network/cryptodoge/wiki/Network-Architecture"
               >
                 Learn more
               </Link>

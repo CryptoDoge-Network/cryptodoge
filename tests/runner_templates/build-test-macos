@@ -1,5 +1,5 @@
 #
-# THIS FILE IS GENERATED. SEE https://github.com/Cryptodoge-Network/cryptodoge/tree/main/tests#readme
+# THIS FILE IS GENERATED. SEE https://github.com/CryptoDoge-Network/cryptodoge/tree/main/tests#readme
 #
 name: MacOS TEST_NAME Tests
 
@@ -79,5 +79,5 @@ INSTALL_TIMELORD
         . ./activate
         ./venv/bin/py.test TEST_DIR -s -v --durations 0PYTEST_PARALLEL_ARGS
 #
-# THIS FILE IS GENERATED. SEE https://github.com/Cryptodoge-Network/cryptodoge/tree/main/tests#readme
+# THIS FILE IS GENERATED. SEE https://github.com/CryptoDoge-Network/cryptodoge/tree/main/tests#readme
 #

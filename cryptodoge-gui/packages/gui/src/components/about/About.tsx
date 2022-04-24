@@ -147,7 +147,7 @@ export default function About(props: Props) {
         </VersionsTable>
 
         <BugReport
-          href="https://github.com/Cryptodoge-Network/cryptodoge/issues"
+          href="https://github.com/CryptoDoge-Network/cryptodoge/issues"
           target="_blank"
         >
           Report an issue

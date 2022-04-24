@@ -86,7 +86,7 @@ do_install_npm_locally(){
 }
 
 # Work around for inconsistent `npm` exec path issue
-# https://github.com/Cryptodoge-Network/cryptodoge/pull/10460#issuecomment-1054492495
+# https://github.com/CryptoDoge-Network/cryptodoge/pull/10460#issuecomment-1054492495
 patch_inconsistent_npm_issue(){
   node_module_dir=$1
   if [ ! -d "$node_module_dir" ]; then
@@ -192,7 +192,7 @@ if [ ! "$CI" ]; then
   fi
 
   # Work around for inconsistent `npm` exec path issue
-  # https://github.com/Cryptodoge-Network/cryptodoge/pull/10460#issuecomment-1054492495
+  # https://github.com/CryptoDoge-Network/cryptodoge/pull/10460#issuecomment-1054492495
   patch_inconsistent_npm_issue "../node_modules"
 
   npm ci

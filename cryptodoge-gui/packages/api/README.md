@@ -2,7 +2,7 @@
 
 ![Alt text](https://www.cryptodoge.cc/img/cryptodoge_logo.svg)
 
-This library provides support for TypeScript/JavaScript [Cryptodoge](https://www.cryptodoge.cc) apps to access the [Cryptodoge Blockchain RPC](https://github.com/Cryptodoge-Network/cryptodoge/wiki/RPC-Interfaces), by making it easier to perform the following actions:
+This library provides support for TypeScript/JavaScript [Cryptodoge](https://www.cryptodoge.cc) apps to access the [Cryptodoge Blockchain RPC](https://github.com/CryptoDoge-Network/cryptodoge/wiki/RPC-Interfaces), by making it easier to perform the following actions:
 
 - Making requests to the Cryptodoge Blockchain RPC.
 - Catch responses and errors with standard try/catch and async/await syntax.

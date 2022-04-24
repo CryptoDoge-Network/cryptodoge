@@ -35,7 +35,7 @@ export default function FarmOverviewHero() {
               where your farm will be once you add a plot.{' '}
               <Link
                 target="_blank"
-                href="https://github.com/Cryptodoge-Network/cryptodoge/wiki/Network-Architecture"
+                href="https://github.com/CryptoDoge-Network/cryptodoge/wiki/Network-Architecture"
               >
                 Learn more
               </Link>

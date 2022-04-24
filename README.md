@@ -12,9 +12,9 @@ Cryptodoge, a digital currency based on an open source, peer-to-peer internet pr
 ## Installing
 
 Install instructions are available in the
-[INSTALL](https://github.com/Cryptodoge-Network/cryptodoge/wiki/INSTALL)
+[INSTALL](https://github.com/CryptoDoge-Network/cryptodoge/wiki/INSTALL)
 section of the
-[cryptodoge repository wiki](https://github.com/Cryptodoge-Network/cryptodoge/wiki).
+[cryptodoge repository wiki](https://github.com/CryptoDoge-Network/cryptodoge/wiki).
 
 
 ## Gamefi

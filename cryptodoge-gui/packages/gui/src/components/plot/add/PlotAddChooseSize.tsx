@@ -79,7 +79,7 @@ export default function PlotAddChooseSize(props: Props) {
           }
           <Link
             target="_blank"
-            href="https://github.com/Cryptodoge-Network/cryptodoge/wiki/k-sizes"
+            href="https://github.com/CryptoDoge-Network/cryptodoge/wiki/k-sizes"
           >
             Learn more
           </Link>

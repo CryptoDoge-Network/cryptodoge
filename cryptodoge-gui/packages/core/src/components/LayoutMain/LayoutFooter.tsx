@@ -20,7 +20,7 @@ color: rgb(128, 160, 194);
 async function openFAQURL(): Promise<void> {
   try {
     const shell: Shell = (window as any).shell;
-    await shell.openExternal('https://github.com/Cryptodoge-Network/cryptodoge/wiki/FAQ');
+    await shell.openExternal('https://github.com/CryptoDoge-Network/cryptodoge/wiki/FAQ');
   }
   catch (e) {
     console.error(e);

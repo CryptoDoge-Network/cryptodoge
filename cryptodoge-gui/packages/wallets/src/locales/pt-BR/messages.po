@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-Project: cryptodoge\n"
 "X-Crowdin-Project-ID: 440660\n"
 "X-Crowdin-Language: pt-BR\n"
-"X-Crowdin-File: /[Cryptodoge-Network.cryptodoge-gui] main/src/locales/en-US/messages.po\n"
+"X-Crowdin-File: /[CryptoDoge-Network.cryptodoge-gui] main/src/locales/en-US/messages.po\n"
 "X-Crowdin-File-ID: 118\n"
 
 #: src/components/plot/add/PlotAddChoosePlotter.tsx:74

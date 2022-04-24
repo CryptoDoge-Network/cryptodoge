@@ -35,7 +35,7 @@ export default function LocaleToggle(props) {
     handleClose();
 
     openExternal(
-      'https://github.com/Cryptodoge-Network/cryptodoge-gui/tree/main/src/locales/README.md',
+      'https://github.com/CryptoDoge-Network/cryptodoge-gui/tree/main/src/locales/README.md',
     );
   }
 

@@ -96,7 +96,7 @@ export default function FarmFullNodeConnections() {
           {'The full node that your farmer is connected to is below. '}
           <Link
             target="_blank"
-            href="https://github.com/Cryptodoge-Network/cryptodoge/wiki/Network-Architecture"
+            href="https://github.com/CryptoDoge-Network/cryptodoge/wiki/Network-Architecture"
           >
             Learn more
           </Link>

@@ -449,7 +449,7 @@ if (!handleSquirrelEvent()) {
             label: i18n._(/* i18n */ { id: 'Cryptodoge Blockchain Wiki' }),
             click: () => {
               openExternal(
-                'https://github.com/Cryptodoge-Network/cryptodoge/wiki',
+                'https://github.com/CryptoDoge-Network/cryptodoge/wiki',
               );
             },
           },
@@ -457,7 +457,7 @@ if (!handleSquirrelEvent()) {
             label: i18n._(/* i18n */ { id: 'Frequently Asked Questions' }),
             click: () => {
               openExternal(
-                'https://github.com/Cryptodoge-Network/cryptodoge/wiki/FAQ',
+                'https://github.com/CryptoDoge-Network/cryptodoge/wiki/FAQ',
               );
             },
           },
@@ -465,7 +465,7 @@ if (!handleSquirrelEvent()) {
             label: i18n._(/* i18n */ { id: 'Release Notes' }),
             click: () => {
               openExternal(
-                'https://github.com/Cryptodoge-Network/cryptodoge/releases',
+                'https://github.com/CryptoDoge-Network/cryptodoge/releases',
               );
             },
           },

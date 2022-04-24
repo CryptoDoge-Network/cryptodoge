@@ -111,7 +111,7 @@ def install_madmax(plotters_root_path: Path):
             [
                 "git",
                 "clone",
-                "https://github.com/Cryptodoge-Network/cryptodoge-plotter-madmax.git",
+                "https://github.com/CryptoDoge-Network/cryptodoge-plotter-madmax.git",
                 MADMAX_PLOTTER_DIR,
             ],
             "Could not clone madmax git repository",
