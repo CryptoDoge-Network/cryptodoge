@@ -298,3 +298,4 @@ tags
 [._]*.un~
 
 # End of https://www.toptal.com/developers/gitignore/api/python,git,vim
+mozilla-ca
