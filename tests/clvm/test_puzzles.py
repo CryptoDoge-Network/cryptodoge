@@ -3,13 +3,13 @@ from unittest import TestCase
 
 from blspy import AugSchemeMPL, BasicSchemeMPL, G1Element, G2Element
 
-from cryprotdoge.types.blockchain_format.program import Program
-from cryprotdoge.types.blockchain_format.sized_bytes import bytes32
-from cryprotdoge.types.coin_spend import CoinSpend
-from cryprotdoge.types.spend_bundle import SpendBundle
-from cryprotdoge.util.condition_tools import ConditionOpcode
-from cryprotdoge.util.hash import std_hash
-from cryprotdoge.wallet.puzzles import (
+from cryptodoge.types.blockchain_format.program import Program
+from cryptodoge.types.blockchain_format.sized_bytes import bytes32
+from cryptodoge.types.coin_spend import CoinSpend
+from cryptodoge.types.condition_opcodes import ConditionOpcode
+from cryptodoge.types.spend_bundle import SpendBundle
+from cryptodoge.util.hash import std_hash
+from cryptodoge.wallet.puzzles import (
     p2_conditions,
     p2_delegated_conditions,
     p2_delegated_puzzle,

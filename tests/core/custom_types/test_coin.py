@@ -1,7 +1,7 @@
-from cryprotdoge.types.blockchain_format.coin import Coin
-from cryprotdoge.types.blockchain_format.sized_bytes import bytes32
-from cryprotdoge.util.ints import uint64
-from cryprotdoge.util.hash import std_hash
+from cryptodoge.types.blockchain_format.coin import Coin
+from cryptodoge.types.blockchain_format.sized_bytes import bytes32
+from cryptodoge.util.ints import uint64
+from cryptodoge.util.hash import std_hash
 import io
 
 

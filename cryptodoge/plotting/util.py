@@ -1,6 +1,7 @@
 import logging
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -8,7 +9,7 @@ from blspy import G1Element, PrivateKey
 from chiapos import DiskProver
 
 from cryptodoge.types.blockchain_format.sized_bytes import bytes32
-from cryptodoge.util.config import load_config, save_config
+from cryptodoge.util.config import load_config, save_config, get_config_lock
 
 log = logging.getLogger(__name__)
 
@@ -31,24 +32,34 @@ class PlotInfo:
     time_modified: float
 
 
+class PlotRefreshEvents(Enum):
+    """
+    This are the events the `PlotManager` will trigger with the callback during a full refresh cycle:
+
+      - started: This event indicates the start of a refresh cycle and contains the total number of files to
+                 process in `PlotRefreshResult.remaining`.
+
+      - batch_processed: This event gets triggered if one batch has been processed. The values of
+                         `PlotRefreshResult.{loaded|removed|processed}` are the results of this specific batch.
+
+      - done: This event gets triggered after all batches has been processed. The values of
+              `PlotRefreshResult.{loaded|removed|processed}` are the totals of all batches.
+
+      Note: The values of `PlotRefreshResult.{remaining|duration}` have the same meaning for all events.
+    """
+
+    started = 0
+    batch_processed = 1
+    done = 2
+
+
 @dataclass
 class PlotRefreshResult:
-    loaded_plots: int = 0
-    loaded_size: float = 0
-    removed_plots: int = 0
-    processed_files: int = 0
-    remaining_files: int = 0
+    loaded: List[PlotInfo] = field(default_factory=list)
+    removed: List[Path] = field(default_factory=list)
+    processed: int = 0
+    remaining: int = 0
     duration: float = 0
-
-    def __add__(self, other):
-        result: PlotRefreshResult = PlotRefreshResult()
-        result.loaded_plots = self.loaded_plots + other.loaded_plots
-        result.loaded_size = self.loaded_size + other.loaded_size
-        result.removed_plots = self.removed_plots + other.removed_plots
-        result.processed_files = self.processed_files + other.processed_files
-        result.remaining_files = other.remaining_files
-        result.duration = self.duration + other.duration
-        return result
 
 
 def get_plot_directories(root_path: Path, config: Dict = None) -> List[str]:
@@ -68,28 +79,30 @@ def get_plot_filenames(root_path: Path) -> Dict[Path, List[Path]]:
 
 def add_plot_directory(root_path: Path, str_path: str) -> Dict:
     log.debug(f"add_plot_directory {str_path}")
-    config = load_config(root_path, "config.yaml")
-    if str(Path(str_path).resolve()) not in get_plot_directories(root_path, config):
-        config["harvester"]["plot_directories"].append(str(Path(str_path).resolve()))
-    save_config(root_path, "config.yaml", config)
-    return config
+    with get_config_lock(root_path, "config.yaml"):
+        config = load_config(root_path, "config.yaml", acquire_lock=False)
+        if str(Path(str_path).resolve()) not in get_plot_directories(root_path, config):
+            config["harvester"]["plot_directories"].append(str(Path(str_path).resolve()))
+        save_config(root_path, "config.yaml", config)
+        return config
 
 
 def remove_plot_directory(root_path: Path, str_path: str) -> None:
     log.debug(f"remove_plot_directory {str_path}")
-    config = load_config(root_path, "config.yaml")
-    str_paths: List[str] = get_plot_directories(root_path, config)
-    # If path str matches exactly, remove
-    if str_path in str_paths:
-        str_paths.remove(str_path)
+    with get_config_lock(root_path, "config.yaml"):
+        config = load_config(root_path, "config.yaml", acquire_lock=False)
+        str_paths: List[str] = get_plot_directories(root_path, config)
+        # If path str matches exactly, remove
+        if str_path in str_paths:
+            str_paths.remove(str_path)
 
-    # If path matches full path, remove
-    new_paths = [Path(sp).resolve() for sp in str_paths]
-    if Path(str_path).resolve() in new_paths:
-        new_paths.remove(Path(str_path).resolve())
+        # If path matches full path, remove
+        new_paths = [Path(sp).resolve() for sp in str_paths]
+        if Path(str_path).resolve() in new_paths:
+            new_paths.remove(Path(str_path).resolve())
 
-    config["harvester"]["plot_directories"] = [str(np) for np in new_paths]
-    save_config(root_path, "config.yaml", config)
+        config["harvester"]["plot_directories"] = [str(np) for np in new_paths]
+        save_config(root_path, "config.yaml", config)
 
 
 def remove_plot(path: Path):

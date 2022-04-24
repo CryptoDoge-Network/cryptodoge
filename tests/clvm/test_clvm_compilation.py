@@ -3,48 +3,54 @@ from unittest import TestCase
 
 from clvm_tools.clvmc import compile_clvm
 
-from cryprotdoge.types.blockchain_format.program import Program, SerializedProgram
+from cryptodoge.types.blockchain_format.program import Program, SerializedProgram
 
 wallet_program_files = set(
     [
-        "cryprotdoge/wallet/puzzles/calculate_synthetic_public_key.clvm",
-        "cryprotdoge/wallet/puzzles/cc.clvm",
-        "cryprotdoge/wallet/puzzles/chialisp_deserialisation.clvm",
-        "cryprotdoge/wallet/puzzles/rom_bootstrap_generator.clvm",
-        "cryprotdoge/wallet/puzzles/generator_for_single_coin.clvm",
-        "cryprotdoge/wallet/puzzles/genesis-by-coin-id-with-0.clvm",
-        "cryprotdoge/wallet/puzzles/genesis-by-puzzle-hash-with-0.clvm",
-        "cryprotdoge/wallet/puzzles/lock.inner.puzzle.clvm",
-        "cryprotdoge/wallet/puzzles/p2_conditions.clvm",
-        "cryprotdoge/wallet/puzzles/p2_delegated_conditions.clvm",
-        "cryprotdoge/wallet/puzzles/p2_delegated_puzzle.clvm",
-        "cryprotdoge/wallet/puzzles/p2_delegated_puzzle_or_hidden_puzzle.clvm",
-        "cryprotdoge/wallet/puzzles/p2_m_of_n_delegate_direct.clvm",
-        "cryprotdoge/wallet/puzzles/p2_puzzle_hash.clvm",
-        "cryprotdoge/wallet/puzzles/rl_aggregation.clvm",
-        "cryprotdoge/wallet/puzzles/rl.clvm",
-        "cryprotdoge/wallet/puzzles/sha256tree_module.clvm",
-        "cryprotdoge/wallet/puzzles/singleton_top_layer.clvm",
-        "cryprotdoge/wallet/puzzles/did_innerpuz.clvm",
-        "cryprotdoge/wallet/puzzles/decompress_puzzle.clvm",
-        "cryprotdoge/wallet/puzzles/decompress_coin_spend_entry_with_prefix.clvm",
-        "cryprotdoge/wallet/puzzles/decompress_coin_spend_entry.clvm",
-        "cryprotdoge/wallet/puzzles/block_program_zero.clvm",
-        "cryprotdoge/wallet/puzzles/test_generator_deserialize.clvm",
-        "cryprotdoge/wallet/puzzles/test_multiple_generator_input_arguments.clvm",
-        "cryprotdoge/wallet/puzzles/p2_singleton.clvm",
-        "cryprotdoge/wallet/puzzles/pool_waitingroom_innerpuz.clvm",
-        "cryprotdoge/wallet/puzzles/pool_member_innerpuz.clvm",
-        "cryprotdoge/wallet/puzzles/singleton_launcher.clvm",
-        "cryprotdoge/wallet/puzzles/p2_singleton_or_delayed_puzhash.clvm",
+        "cryptodoge/wallet/puzzles/calculate_synthetic_public_key.clvm",
+        "cryptodoge/wallet/puzzles/cat.clvm",
+        "cryptodoge/wallet/puzzles/chialisp_deserialisation.clvm",
+        "cryptodoge/wallet/puzzles/rom_bootstrap_generator.clvm",
+        "cryptodoge/wallet/puzzles/generator_for_single_coin.clvm",
+        "cryptodoge/wallet/puzzles/lock.inner.puzzle.clvm",
+        "cryptodoge/wallet/puzzles/p2_conditions.clvm",
+        "cryptodoge/wallet/puzzles/p2_delegated_conditions.clvm",
+        "cryptodoge/wallet/puzzles/p2_delegated_puzzle.clvm",
+        "cryptodoge/wallet/puzzles/p2_delegated_puzzle_or_hidden_puzzle.clvm",
+        "cryptodoge/wallet/puzzles/p2_m_of_n_delegate_direct.clvm",
+        "cryptodoge/wallet/puzzles/p2_puzzle_hash.clvm",
+        "cryptodoge/wallet/puzzles/rl_aggregation.clvm",
+        "cryptodoge/wallet/puzzles/rl.clvm",
+        "cryptodoge/wallet/puzzles/sha256tree_module.clvm",
+        "cryptodoge/wallet/puzzles/singleton_top_layer.clvm",
+        "cryptodoge/wallet/puzzles/did_innerpuz.clvm",
+        "cryptodoge/wallet/puzzles/decompress_puzzle.clvm",
+        "cryptodoge/wallet/puzzles/decompress_coin_spend_entry_with_prefix.clvm",
+        "cryptodoge/wallet/puzzles/decompress_coin_spend_entry.clvm",
+        "cryptodoge/wallet/puzzles/block_program_zero.clvm",
+        "cryptodoge/wallet/puzzles/test_generator_deserialize.clvm",
+        "cryptodoge/wallet/puzzles/test_multiple_generator_input_arguments.clvm",
+        "cryptodoge/wallet/puzzles/p2_singleton.clvm",
+        "cryptodoge/wallet/puzzles/pool_waitingroom_innerpuz.clvm",
+        "cryptodoge/wallet/puzzles/pool_member_innerpuz.clvm",
+        "cryptodoge/wallet/puzzles/singleton_launcher.clvm",
+        "cryptodoge/wallet/puzzles/p2_singleton_or_delayed_puzhash.clvm",
+        "cryptodoge/wallet/puzzles/genesis_by_puzzle_hash.clvm",
+        "cryptodoge/wallet/puzzles/everything_with_signature.clvm",
+        "cryptodoge/wallet/puzzles/delegated_tail.clvm",
+        "cryptodoge/wallet/puzzles/settlement_payments.clvm",
+        "cryptodoge/wallet/puzzles/genesis_by_coin_id.clvm",
+        "cryptodoge/wallet/puzzles/genesis-by-puzzle-hash-with-0.clvm",
+        "cryptodoge/wallet/puzzles/delegated_genesis_checker.clvm",
+        "cryptodoge/wallet/puzzles/genesis-by-coin-id-with-0.clvm",
     ]
 )
 
 clvm_include_files = set(
-    ["cryprotdoge/wallet/puzzles/create-lock-puzzlehash.clvm", "cryprotdoge/wallet/puzzles/condition_codes.clvm"]
+    ["cryptodoge/wallet/puzzles/create-lock-puzzlehash.clvm", "cryptodoge/wallet/puzzles/condition_codes.clvm"]
 )
 
-CLVM_PROGRAM_ROOT = "cryprotdoge/wallet/puzzles"
+CLVM_PROGRAM_ROOT = "cryptodoge/wallet/puzzles"
 
 
 def list_files(dir, glob):
@@ -71,7 +77,7 @@ class TestClvmCompilation(TestCase):
 
     def test_all_programs_listed(self):
         """
-        Checks to see if a new .clvm file was added to cryprotdoge/wallet/puzzles, but not added to `wallet_program_files`
+        Checks to see if a new .clvm file was added to cryptodoge/wallet/puzzles, but not added to `wallet_program_files`
         """
         existing_files = list_files(CLVM_PROGRAM_ROOT, "*.clvm")
         existing_file_paths = set([Path(x).relative_to(CLVM_PROGRAM_ROOT) for x in existing_files])

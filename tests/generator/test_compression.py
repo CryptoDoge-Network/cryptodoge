@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List, Any
 from unittest import TestCase
 
-from cryprotdoge.full_node.bundle_tools import (
+from cryptodoge.full_node.bundle_tools import (
     bundle_suitable_for_compression,
     compressed_coin_spend_entry_list,
     compressed_spend_bundle_solution,
@@ -11,14 +11,14 @@ from cryprotdoge.full_node.bundle_tools import (
     simple_solution_generator,
     spend_bundle_to_serialized_coin_spend_entry_list,
 )
-from cryprotdoge.full_node.generator import run_generator, create_generator_args
-from cryprotdoge.full_node.mempool_check_conditions import get_puzzle_and_solution_for_coin
-from cryprotdoge.types.blockchain_format.program import Program, SerializedProgram, INFINITE_COST
-from cryprotdoge.types.generator_types import BlockGenerator, CompressorArg, GeneratorArg
-from cryprotdoge.types.spend_bundle import SpendBundle
-from cryprotdoge.util.byte_types import hexstr_to_bytes
-from cryprotdoge.util.ints import uint32
-from cryprotdoge.wallet.puzzles.load_clvm import load_clvm
+from cryptodoge.full_node.generator import run_generator_unsafe, create_generator_args
+from cryptodoge.full_node.mempool_check_conditions import get_puzzle_and_solution_for_coin
+from cryptodoge.types.blockchain_format.program import Program, SerializedProgram, INFINITE_COST
+from cryptodoge.types.generator_types import BlockGenerator, CompressorArg
+from cryptodoge.types.spend_bundle import SpendBundle
+from cryptodoge.util.byte_types import hexstr_to_bytes
+from cryptodoge.util.ints import uint32
+from cryptodoge.wallet.puzzles.load_clvm import load_clvm
 
 from tests.core.make_block_generator import make_spend_bundle
 
@@ -28,17 +28,17 @@ from clvm.serialize import sexp_from_stream
 
 from clvm_tools import binutils
 
-TEST_GEN_DESERIALIZE = load_clvm("test_generator_deserialize.clvm", package_or_requirement="cryprotdoge.wallet.puzzles")
-DESERIALIZE_MOD = load_clvm("chialisp_deserialisation.clvm", package_or_requirement="cryprotdoge.wallet.puzzles")
+TEST_GEN_DESERIALIZE = load_clvm("test_generator_deserialize.clvm", package_or_requirement="cryptodoge.wallet.puzzles")
+DESERIALIZE_MOD = load_clvm("chialisp_deserialisation.clvm", package_or_requirement="cryptodoge.wallet.puzzles")
 
-DECOMPRESS_PUZZLE = load_clvm("decompress_puzzle.clvm", package_or_requirement="cryprotdoge.wallet.puzzles")
-DECOMPRESS_CSE = load_clvm("decompress_coin_spend_entry.clvm", package_or_requirement="cryprotdoge.wallet.puzzles")
+DECOMPRESS_PUZZLE = load_clvm("decompress_puzzle.clvm", package_or_requirement="cryptodoge.wallet.puzzles")
+DECOMPRESS_CSE = load_clvm("decompress_coin_spend_entry.clvm", package_or_requirement="cryptodoge.wallet.puzzles")
 
 DECOMPRESS_CSE_WITH_PREFIX = load_clvm(
-    "decompress_coin_spend_entry_with_prefix.clvm", package_or_requirement="cryprotdoge.wallet.puzzles"
+    "decompress_coin_spend_entry_with_prefix.clvm", package_or_requirement="cryptodoge.wallet.puzzles"
 )
-DECOMPRESS_BLOCK = load_clvm("block_program_zero.clvm", package_or_requirement="cryprotdoge.wallet.puzzles")
-TEST_MULTIPLE = load_clvm("test_multiple_generator_input_arguments.clvm", package_or_requirement="cryprotdoge.wallet.puzzles")
+DECOMPRESS_BLOCK = load_clvm("block_program_zero.clvm", package_or_requirement="cryptodoge.wallet.puzzles")
+TEST_MULTIPLE = load_clvm("test_multiple_generator_input_arguments.clvm", package_or_requirement="cryptodoge.wallet.puzzles")
 
 Nil = Program.from_bytes(b"\x80")
 
@@ -74,11 +74,15 @@ def create_multiple_ref_generator(args: MultipleCompressorArg, spend_bundle: Spe
     )
 
     # TODO aqk: Improve ergonomics of CompressorArg -> GeneratorArg conversion
-    generator_args = [
-        GeneratorArg(FAKE_BLOCK_HEIGHT1, args.arg[0].generator),
-        GeneratorArg(FAKE_BLOCK_HEIGHT2, args.arg[1].generator),
+    generator_list = [
+        args.arg[0].generator,
+        args.arg[1].generator,
     ]
-    return BlockGenerator(program, generator_args)
+    generator_heights = [
+        FAKE_BLOCK_HEIGHT1,
+        FAKE_BLOCK_HEIGHT2,
+    ]
+    return BlockGenerator(program, generator_list, generator_heights)
 
 
 def spend_bundle_to_coin_spend_entry_list(bundle: SpendBundle) -> List[Any]:
@@ -117,7 +121,7 @@ class TestCompression(TestCase):
             gen_args = MultipleCompressorArg([ca1, ca2], split_offset)
             spend_bundle: SpendBundle = make_spend_bundle(1)
             multi_gen = create_multiple_ref_generator(gen_args, spend_bundle)
-            cost, result = run_generator(multi_gen, INFINITE_COST)
+            cost, result = run_generator_unsafe(multi_gen, INFINITE_COST)
             results.append(result)
             assert result is not None
             assert cost > 0
@@ -130,8 +134,8 @@ class TestCompression(TestCase):
         c = compressed_spend_bundle_solution(ca, sb)
         s = simple_solution_generator(sb)
         assert c != s
-        cost_c, result_c = run_generator(c, INFINITE_COST)
-        cost_s, result_s = run_generator(s, INFINITE_COST)
+        cost_c, result_c = run_generator_unsafe(c, INFINITE_COST)
+        cost_s, result_s = run_generator_unsafe(s, INFINITE_COST)
         print(result_c)
         assert result_c is not None
         assert result_s is not None

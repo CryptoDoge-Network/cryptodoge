@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from typing import Any, List
 
+from clvm.casts import int_to_bytes
+
 from cryptodoge.types.blockchain_format.sized_bytes import bytes32
-from cryptodoge.util.clvm import int_to_bytes
 from cryptodoge.util.hash import std_hash
 from cryptodoge.util.ints import uint64
 from cryptodoge.util.streamable import Streamable, streamable

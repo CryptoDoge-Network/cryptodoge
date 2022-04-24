@@ -1,6 +1,6 @@
 import pytest
-from cryprotdoge.util.misc import format_bytes
-from cryprotdoge.util.misc import format_minutes
+from cryptodoge.util.misc import format_bytes
+from cryptodoge.util.misc import format_minutes
 
 
 class TestMisc:

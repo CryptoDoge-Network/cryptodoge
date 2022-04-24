@@ -1,22 +1,22 @@
 from typing import Dict, List, Optional, Tuple, Any
 
 from blspy import AugSchemeMPL, G2Element, PrivateKey
+from clvm.casts import int_from_bytes, int_to_bytes
 
-from cryprotdoge.consensus.constants import ConsensusConstants
-from cryprotdoge.util.hash import std_hash
-from cryprotdoge.types.announcement import Announcement
-from cryprotdoge.types.blockchain_format.coin import Coin
-from cryprotdoge.types.blockchain_format.program import Program
-from cryprotdoge.types.blockchain_format.sized_bytes import bytes32
-from cryprotdoge.types.coin_spend import CoinSpend
-from cryprotdoge.types.condition_opcodes import ConditionOpcode
-from cryprotdoge.types.condition_with_args import ConditionWithArgs
-from cryprotdoge.types.spend_bundle import SpendBundle
-from cryprotdoge.util.clvm import int_from_bytes, int_to_bytes
-from cryprotdoge.util.condition_tools import conditions_by_opcode, conditions_for_solution
-from cryprotdoge.util.ints import uint32, uint64
-from cryprotdoge.wallet.derive_keys import master_sk_to_wallet_sk
-from cryprotdoge.wallet.puzzles.p2_delegated_puzzle_or_hidden_puzzle import (
+from cryptodoge.consensus.constants import ConsensusConstants
+from cryptodoge.util.hash import std_hash
+from cryptodoge.types.announcement import Announcement
+from cryptodoge.types.blockchain_format.coin import Coin
+from cryptodoge.types.blockchain_format.program import Program
+from cryptodoge.types.blockchain_format.sized_bytes import bytes32
+from cryptodoge.types.coin_spend import CoinSpend
+from cryptodoge.types.condition_opcodes import ConditionOpcode
+from cryptodoge.types.condition_with_args import ConditionWithArgs
+from cryptodoge.types.spend_bundle import SpendBundle
+from cryptodoge.util.condition_tools import conditions_by_opcode, conditions_for_solution
+from cryptodoge.util.ints import uint32, uint64
+from cryptodoge.wallet.derive_keys import master_sk_to_wallet_sk
+from cryptodoge.wallet.puzzles.p2_delegated_puzzle_or_hidden_puzzle import (
     DEFAULT_HIDDEN_PUZZLE_HASH,
     calculate_synthetic_secret_key,
     puzzle_for_pk,
@@ -75,7 +75,9 @@ class WalletTool:
 
     def get_new_puzzlehash(self) -> bytes32:
         puzzle = self.get_new_puzzle()
-        return puzzle.get_tree_hash()
+        # TODO: address hint error and remove ignore
+        #       error: "bytes32" has no attribute "get_tree_hash"  [attr-defined]
+        return puzzle.get_tree_hash()  # type: ignore[attr-defined]
 
     def sign(self, value: bytes, pubkey: bytes) -> G2Element:
         privatekey: PrivateKey = master_sk_to_wallet_sk(self.private_key, self.pubkey_num_lookup[pubkey])
@@ -139,7 +141,14 @@ class WalletTool:
             if n == 0:
                 message_list = [c.name() for c in coins]
                 for outputs in condition_dic[ConditionOpcode.CREATE_COIN]:
-                    message_list.append(Coin(coin.name(), outputs.vars[0], int_from_bytes(outputs.vars[1])).name())
+                    # TODO: address hint error and remove ignore
+                    #       error: Argument 2 to "Coin" has incompatible type "bytes"; expected "bytes32"  [arg-type]
+                    coin_to_append = Coin(
+                        coin.name(),
+                        outputs.vars[0],  # type: ignore[arg-type]
+                        int_from_bytes(outputs.vars[1]),
+                    )
+                    message_list.append(coin_to_append.name())
                 message = std_hash(b"".join(message_list))
                 condition_dic[ConditionOpcode.CREATE_COIN_ANNOUNCEMENT].append(
                     ConditionWithArgs(ConditionOpcode.CREATE_COIN_ANNOUNCEMENT, [message])
@@ -158,7 +167,7 @@ class WalletTool:
         signatures = []
         solution: Program
         puzzle: Program
-        for coin_spend in coin_spends:  # type: ignore # noqa
+        for coin_spend in coin_spends:  # noqa
             secret_key = self.get_private_key_for_puzzle_hash(coin_spend.coin.puzzle_hash)
             synthetic_secret_key = calculate_synthetic_secret_key(secret_key, DEFAULT_HIDDEN_PUZZLE_HASH)
             err, con, cost = conditions_for_solution(

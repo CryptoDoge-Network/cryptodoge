@@ -5,23 +5,23 @@ from unittest import TestCase
 
 from blspy import AugSchemeMPL, G1Element, G2Element, PrivateKey
 
-from cryprotdoge.types.blockchain_format.program import Program
-from cryprotdoge.types.blockchain_format.sized_bytes import bytes32
-from cryprotdoge.types.blockchain_format.coin import Coin
-from cryprotdoge.types.coin_spend import CoinSpend
-from cryprotdoge.types.spend_bundle import SpendBundle
-from cryprotdoge.util.ints import uint64, uint32
-from cryprotdoge.consensus.default_constants import DEFAULT_CONSTANTS
-from cryprotdoge.wallet.puzzles.p2_delegated_puzzle_or_hidden_puzzle import (
+from cryptodoge.types.blockchain_format.program import Program
+from cryptodoge.types.blockchain_format.sized_bytes import bytes32
+from cryptodoge.types.blockchain_format.coin import Coin
+from cryptodoge.types.coin_spend import CoinSpend
+from cryptodoge.types.spend_bundle import SpendBundle
+from cryptodoge.util.ints import uint64, uint32
+from cryptodoge.consensus.default_constants import DEFAULT_CONSTANTS
+from cryptodoge.wallet.puzzles.p2_delegated_puzzle_or_hidden_puzzle import (
     puzzle_for_pk,
     solution_for_conditions,
     calculate_synthetic_secret_key,
     DEFAULT_HIDDEN_PUZZLE_HASH,
 )
-from cryprotdoge.wallet.puzzles.p2_conditions import puzzle_for_conditions
-from cryprotdoge.wallet.puzzles import singleton_top_layer
-from cryprotdoge.pools.pool_wallet_info import PoolState
-from cryprotdoge.pools.pool_puzzles import (
+from cryptodoge.wallet.puzzles.p2_conditions import puzzle_for_conditions
+from cryptodoge.wallet.puzzles import singleton_top_layer
+from cryptodoge.pools.pool_wallet_info import PoolState
+from cryptodoge.pools.pool_puzzles import (
     create_waiting_room_inner_puzzle,
     create_pooling_inner_puzzle,
     create_p2_singleton_puzzle,
@@ -47,9 +47,9 @@ from tests.clvm.coin_store import CoinStore, CoinTimestamp, BadSpendBundleError
 
 """
 This test suite aims to test:
-    - cryprotdoge.pools.pool_puzzles.py
-    - cryprotdoge.wallet.puzzles.pool_member_innerpuz.clvm
-    - cryprotdoge.wallet.puzzles.pool_waiting_room_innerpuz.clvm
+    - cryptodoge.pools.pool_puzzles.py
+    - cryptodoge.wallet.puzzles.pool_member_innerpuz.clvm
+    - cryptodoge.wallet.puzzles.pool_waiting_room_innerpuz.clvm
 """
 
 

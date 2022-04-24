@@ -1,7 +1,7 @@
 from secrets import token_bytes
 
-from cryprotdoge.consensus.default_constants import DEFAULT_CONSTANTS
-from cryprotdoge.types.blockchain_format.proof_of_space import ProofOfSpace  # pylint: disable=E0401
+from cryptodoge.consensus.default_constants import DEFAULT_CONSTANTS
+from cryptodoge.types.blockchain_format.proof_of_space import ProofOfSpace  # pylint: disable=E0401
 
 
 class TestProofOfSpace:

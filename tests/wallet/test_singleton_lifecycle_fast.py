@@ -4,15 +4,15 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 from blspy import G1Element, G2Element
 from clvm_tools import binutils
 
-from cryprotdoge.types.blockchain_format.program import Program, SerializedProgram
-from cryprotdoge.types.announcement import Announcement
-from cryprotdoge.types.blockchain_format.coin import Coin
-from cryprotdoge.types.blockchain_format.sized_bytes import bytes32
-from cryprotdoge.types.coin_spend import CoinSpend
-from cryprotdoge.types.spend_bundle import SpendBundle
-from cryprotdoge.util.condition_tools import ConditionOpcode
-from cryprotdoge.util.ints import uint64
-from cryprotdoge.wallet.puzzles.load_clvm import load_clvm
+from cryptodoge.types.blockchain_format.program import Program, SerializedProgram
+from cryptodoge.types.announcement import Announcement
+from cryptodoge.types.blockchain_format.coin import Coin
+from cryptodoge.types.blockchain_format.sized_bytes import bytes32
+from cryptodoge.types.coin_spend import CoinSpend
+from cryptodoge.types.condition_opcodes import ConditionOpcode
+from cryptodoge.types.spend_bundle import SpendBundle
+from cryptodoge.util.ints import uint64
+from cryptodoge.wallet.puzzles.load_clvm import load_clvm
 
 from tests.clvm.coin_store import BadSpendBundleError, CoinStore, CoinTimestamp
 
@@ -298,11 +298,11 @@ def launcher_conditions_and_spend_bundle(
     return launcher_coin.name(), expected_conditions, spend_bundle
 
 
-def singleton_puzzle(launcher_id: Program, launcher_puzzle_hash: bytes32, inner_puzzle: Program) -> Program:
+def singleton_puzzle(launcher_id: bytes32, launcher_puzzle_hash: bytes32, inner_puzzle: Program) -> Program:
     return SINGLETON_MOD.curry((SINGLETON_MOD_HASH, (launcher_id, launcher_puzzle_hash)), inner_puzzle)
 
 
-def singleton_puzzle_hash(launcher_id: Program, launcher_puzzle_hash: bytes32, inner_puzzle: Program) -> bytes32:
+def singleton_puzzle_hash(launcher_id: bytes32, launcher_puzzle_hash: bytes32, inner_puzzle: Program) -> bytes32:
     return singleton_puzzle(launcher_id, launcher_puzzle_hash, inner_puzzle).get_tree_hash()
 
 

@@ -2,15 +2,15 @@ from typing import Dict
 
 import blspy
 
-from cryprotdoge.full_node.bundle_tools import simple_solution_generator
-from cryprotdoge.types.blockchain_format.coin import Coin
-from cryprotdoge.types.blockchain_format.program import Program
-from cryprotdoge.types.coin_spend import CoinSpend
-from cryprotdoge.types.condition_opcodes import ConditionOpcode
-from cryprotdoge.types.generator_types import BlockGenerator
-from cryprotdoge.types.spend_bundle import SpendBundle
-from cryprotdoge.util.ints import uint64
-from cryprotdoge.wallet.puzzles.p2_delegated_puzzle_or_hidden_puzzle import puzzle_for_pk, solution_for_conditions
+from cryptodoge.full_node.bundle_tools import simple_solution_generator
+from cryptodoge.types.blockchain_format.coin import Coin
+from cryptodoge.types.blockchain_format.program import Program
+from cryptodoge.types.coin_spend import CoinSpend
+from cryptodoge.types.condition_opcodes import ConditionOpcode
+from cryptodoge.types.generator_types import BlockGenerator
+from cryptodoge.types.spend_bundle import SpendBundle
+from cryptodoge.util.ints import uint64
+from cryptodoge.wallet.puzzles.p2_delegated_puzzle_or_hidden_puzzle import puzzle_for_pk, solution_for_conditions
 
 GROUP_ORDER = 0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001
 
@@ -37,7 +37,10 @@ def make_fake_coin(index: int, puzzle_hash_db: dict) -> Coin:
     parent = index.to_bytes(32, "big")
     puzzle_hash = puzzle_hash_for_index(index, puzzle_hash_db)
     amount = 100000
-    return Coin(parent, puzzle_hash, uint64(amount))
+    # TODO: address hint error and remove ignore
+    #       error: Argument 1 to "Coin" has incompatible type "bytes"; expected "bytes32"  [arg-type]
+    #       error: Argument 2 to "Coin" has incompatible type "bytes"; expected "bytes32"  [arg-type]
+    return Coin(parent, puzzle_hash, uint64(amount))  # type: ignore[arg-type]
 
 
 def conditions_for_payment(coin) -> Program:

@@ -3,20 +3,21 @@ import asyncio
 import logging
 
 import pytest
+import pytest_asyncio
 from aiohttp import ClientSession, ClientTimeout, ServerDisconnectedError, WSCloseCode, WSMessage, WSMsgType
 
-from cryprotdoge.full_node.full_node_api import FullNodeAPI
-from cryprotdoge.protocols import full_node_protocol
-from cryprotdoge.protocols.protocol_message_types import ProtocolMessageTypes
-from cryprotdoge.protocols.shared_protocol import Handshake
-from cryprotdoge.server.outbound_message import make_msg, Message
-from cryprotdoge.server.rate_limits import RateLimiter
-from cryprotdoge.server.server import ssl_context_for_client
-from cryprotdoge.server.ws_connection import WSCryprotdogeConnection
-from cryprotdoge.types.peer_info import PeerInfo
-from cryprotdoge.util.ints import uint16, uint64
-from cryprotdoge.util.errors import Err
-from tests.setup_nodes import self_hostname, setup_simulators_and_wallets
+from cryptodoge.full_node.full_node_api import FullNodeAPI
+from cryptodoge.protocols import full_node_protocol
+from cryptodoge.protocols.protocol_message_types import ProtocolMessageTypes
+from cryptodoge.protocols.shared_protocol import Handshake
+from cryptodoge.server.outbound_message import make_msg, Message
+from cryptodoge.server.rate_limits import RateLimiter
+from cryptodoge.server.server import ssl_context_for_client
+from cryptodoge.server.ws_connection import WSCryptodogeConnection
+from cryptodoge.types.peer_info import PeerInfo
+from cryptodoge.util.ints import uint16, uint64
+from cryptodoge.util.errors import Err
+from tests.setup_nodes import setup_simulators_and_wallets
 from tests.time_out_assert import time_out_assert
 
 log = logging.getLogger(__name__)
@@ -32,15 +33,9 @@ async def get_block_path(full_node: FullNodeAPI):
     return blocks_list
 
 
-@pytest.fixture(scope="session")
-def event_loop():
-    loop = asyncio.get_event_loop()
-    yield loop
-
-
-@pytest.fixture(scope="function")
-async def setup_two_nodes():
-    async for _ in setup_simulators_and_wallets(2, 0, {}, starting_port=60000):
+@pytest_asyncio.fixture(scope="function")
+async def setup_two_nodes(db_version):
+    async for _ in setup_simulators_and_wallets(2, 0, {}, db_version=db_version):
         yield _
 
 
@@ -51,7 +46,7 @@ class FakeRateLimiter:
 
 class TestDos:
     @pytest.mark.asyncio
-    async def test_large_message_disconnect_and_ban(self, setup_two_nodes):
+    async def test_large_message_disconnect_and_ban(self, setup_two_nodes, self_hostname):
         nodes, _ = setup_two_nodes
         server_1 = nodes[0].full_node.server
         server_2 = nodes[1].full_node.server
@@ -62,7 +57,7 @@ class TestDos:
         url = f"wss://{self_hostname}:{server_1._port}/ws"
 
         ssl_context = ssl_context_for_client(
-            server_2.cryprotdoge_ca_crt_path, server_2.cryprotdoge_ca_key_path, server_2.p2p_crt_path, server_2.p2p_key_path
+            server_2.cryptodoge_ca_crt_path, server_2.cryptodoge_ca_key_path, server_2.p2p_crt_path, server_2.p2p_key_path
         )
         ws = await session.ws_connect(
             url, autoclose=True, autoping=True, heartbeat=60, ssl=ssl_context, max_msg_size=100 * 1024 * 1024
@@ -99,7 +94,7 @@ class TestDos:
         await session.close()
 
     @pytest.mark.asyncio
-    async def test_bad_handshake_and_ban(self, setup_two_nodes):
+    async def test_bad_handshake_and_ban(self, setup_two_nodes, self_hostname):
         nodes, _ = setup_two_nodes
         server_1 = nodes[0].full_node.server
         server_2 = nodes[1].full_node.server
@@ -111,7 +106,7 @@ class TestDos:
         url = f"wss://{self_hostname}:{server_1._port}/ws"
 
         ssl_context = ssl_context_for_client(
-            server_2.cryprotdoge_ca_crt_path, server_2.cryprotdoge_ca_key_path, server_2.p2p_crt_path, server_2.p2p_key_path
+            server_2.cryptodoge_ca_crt_path, server_2.cryptodoge_ca_key_path, server_2.p2p_crt_path, server_2.p2p_key_path
         )
         ws = await session.ws_connect(
             url, autoclose=True, autoping=True, heartbeat=60, ssl=ssl_context, max_msg_size=100 * 1024 * 1024
@@ -145,7 +140,7 @@ class TestDos:
         await session.close()
 
     @pytest.mark.asyncio
-    async def test_invalid_protocol_handshake(self, setup_two_nodes):
+    async def test_invalid_protocol_handshake(self, setup_two_nodes, self_hostname):
         nodes, _ = setup_two_nodes
         server_1 = nodes[0].full_node.server
         server_2 = nodes[1].full_node.server
@@ -157,7 +152,7 @@ class TestDos:
         url = f"wss://{self_hostname}:{server_1._port}/ws"
 
         ssl_context = ssl_context_for_client(
-            server_2.cryprotdoge_ca_crt_path, server_2.cryprotdoge_ca_key_path, server_2.p2p_crt_path, server_2.p2p_key_path
+            server_2.cryptodoge_ca_crt_path, server_2.cryptodoge_ca_key_path, server_2.p2p_crt_path, server_2.p2p_key_path
         )
         ws = await session.ws_connect(
             url, autoclose=True, autoping=True, heartbeat=60, ssl=ssl_context, max_msg_size=100 * 1024 * 1024
@@ -178,7 +173,7 @@ class TestDos:
         await asyncio.sleep(1)  # give some time for cleanup to work
 
     @pytest.mark.asyncio
-    async def test_spam_tx(self, setup_two_nodes):
+    async def test_spam_tx(self, setup_two_nodes, self_hostname):
         nodes, _ = setup_two_nodes
         full_node_1, full_node_2 = nodes
         server_1 = nodes[0].full_node.server
@@ -188,8 +183,8 @@ class TestDos:
 
         assert len(server_1.all_connections) == 1
 
-        ws_con: WSCryprotdogeConnection = list(server_1.all_connections.values())[0]
-        ws_con_2: WSCryprotdogeConnection = list(server_2.all_connections.values())[0]
+        ws_con: WSCryptodogeConnection = list(server_1.all_connections.values())[0]
+        ws_con_2: WSCryptodogeConnection = list(server_2.all_connections.values())[0]
 
         ws_con.peer_host = "1.2.3.4"
         ws_con_2.peer_host = "1.2.3.4"
@@ -231,7 +226,7 @@ class TestDos:
         await time_out_assert(15, is_banned)
 
     @pytest.mark.asyncio
-    async def test_spam_message_non_tx(self, setup_two_nodes):
+    async def test_spam_message_non_tx(self, setup_two_nodes, self_hostname):
         nodes, _ = setup_two_nodes
         full_node_1, full_node_2 = nodes
         server_1 = nodes[0].full_node.server
@@ -241,8 +236,8 @@ class TestDos:
 
         assert len(server_1.all_connections) == 1
 
-        ws_con: WSCryprotdogeConnection = list(server_1.all_connections.values())[0]
-        ws_con_2: WSCryprotdogeConnection = list(server_2.all_connections.values())[0]
+        ws_con: WSCryptodogeConnection = list(server_1.all_connections.values())[0]
+        ws_con_2: WSCryptodogeConnection = list(server_2.all_connections.values())[0]
 
         ws_con.peer_host = "1.2.3.4"
         ws_con_2.peer_host = "1.2.3.4"
@@ -280,7 +275,7 @@ class TestDos:
         await time_out_assert(15, is_banned)
 
     @pytest.mark.asyncio
-    async def test_spam_message_too_large(self, setup_two_nodes):
+    async def test_spam_message_too_large(self, setup_two_nodes, self_hostname):
         nodes, _ = setup_two_nodes
         full_node_1, full_node_2 = nodes
         server_1 = nodes[0].full_node.server
@@ -290,8 +285,8 @@ class TestDos:
 
         assert len(server_1.all_connections) == 1
 
-        ws_con: WSCryprotdogeConnection = list(server_1.all_connections.values())[0]
-        ws_con_2: WSCryprotdogeConnection = list(server_2.all_connections.values())[0]
+        ws_con: WSCryptodogeConnection = list(server_1.all_connections.values())[0]
+        ws_con_2: WSCryptodogeConnection = list(server_2.all_connections.values())[0]
 
         ws_con.peer_host = "1.2.3.4"
         ws_con_2.peer_host = "1.2.3.4"

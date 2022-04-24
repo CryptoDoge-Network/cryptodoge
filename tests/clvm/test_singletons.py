@@ -4,17 +4,17 @@ from typing import List, Tuple, Optional
 
 from blspy import AugSchemeMPL, G1Element, G2Element, PrivateKey
 
-from cryprotdoge.types.blockchain_format.program import Program
-from cryprotdoge.types.blockchain_format.sized_bytes import bytes32
-from cryprotdoge.types.blockchain_format.coin import Coin
-from cryprotdoge.types.coin_spend import CoinSpend
-from cryprotdoge.types.spend_bundle import SpendBundle
-from cryprotdoge.util.errors import Err
-from cryprotdoge.util.condition_tools import ConditionOpcode
-from cryprotdoge.util.ints import uint64
-from cryprotdoge.consensus.default_constants import DEFAULT_CONSTANTS
-from cryprotdoge.wallet.lineage_proof import LineageProof
-from cryprotdoge.wallet.puzzles import (
+from cryptodoge.types.blockchain_format.program import Program
+from cryptodoge.types.blockchain_format.sized_bytes import bytes32
+from cryptodoge.types.blockchain_format.coin import Coin
+from cryptodoge.types.coin_spend import CoinSpend
+from cryptodoge.types.condition_opcodes import ConditionOpcode
+from cryptodoge.types.spend_bundle import SpendBundle
+from cryptodoge.util.errors import Err
+from cryptodoge.util.ints import uint64
+from cryptodoge.consensus.default_constants import DEFAULT_CONSTANTS
+from cryptodoge.wallet.lineage_proof import LineageProof
+from cryptodoge.wallet.puzzles import (
     p2_conditions,
     p2_delegated_puzzle_or_hidden_puzzle,
     singleton_top_layer,
@@ -25,14 +25,14 @@ from tests.clvm.test_puzzles import (
     secret_exponent_for_index,
 )
 
-from cryprotdoge.clvm.spend_sim import SpendSim, SimClient
+from cryptodoge.clvm.spend_sim import SpendSim, SimClient
 
 """
 This test suite aims to test:
-    - cryprotdoge.wallet.puzzles.singleton_top_layer.py
-    - cryprotdoge.wallet.puzzles.singleton_top_layer.clvm
-    - cryprotdoge.wallet.puzzles.p2_singleton.clvm
-    - cryprotdoge.wallet.puzzles.p2_singleton_or_delayed_puzhash.clvm
+    - cryptodoge.wallet.puzzles.singleton_top_layer.py
+    - cryptodoge.wallet.puzzles.singleton_top_layer.clvm
+    - cryptodoge.wallet.puzzles.p2_singleton.clvm
+    - cryptodoge.wallet.puzzles.p2_singleton_or_delayed_puzhash.clvm
 """
 
 

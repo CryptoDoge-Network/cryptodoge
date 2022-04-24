@@ -1,20 +1,13 @@
-import asyncio
 from pathlib import Path
 from secrets import token_bytes
 import aiosqlite
 import pytest
 
-from cryprotdoge.types.blockchain_format.coin import Coin
-from cryprotdoge.util.db_wrapper import DBWrapper
-from cryprotdoge.util.ints import uint64
+from cryptodoge.types.blockchain_format.coin import Coin
+from cryptodoge.util.db_wrapper import DBWrapper
+from cryptodoge.util.ints import uint64
 
-from cryprotdoge.wallet.wallet_interested_store import WalletInterestedStore
-
-
-@pytest.fixture(scope="module")
-def event_loop():
-    loop = asyncio.get_event_loop()
-    yield loop
+from cryptodoge.wallet.wallet_interested_store import WalletInterestedStore
 
 
 class TestWalletInterestedStore:

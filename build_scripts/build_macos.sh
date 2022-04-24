@@ -1,8 +1,11 @@
 #!/bin/bash
+
+set -euo pipefail
+
 pip install setuptools_scm
 # The environment variable CRYPTODOGE_INSTALLER_VERSION needs to be defined.
 # If the env variable NOTARIZE and the username and password variables are
-# set, this will attempt to Notarize the signed DMG.
+# set, this will attempt to Notarize the signed DMG.c
 CRYPTODOGE_INSTALLER_VERSION=$(python installer-version.py)
 
 if [ ! "$CRYPTODOGE_INSTALLER_VERSION" ]; then
@@ -12,17 +15,17 @@ fi
 echo "Cryptodoge Installer Version is: $CRYPTODOGE_INSTALLER_VERSION"
 
 echo "Installing npm and electron packagers"
-npm install electron-installer-dmg -g
-npm install electron-packager -g
-npm install electron/electron-osx-sign -g
-npm install notarize-cli -g
+cd npm_macos || exit
+npm ci
+PATH=$(npm bin):$PATH
+cd .. || exit
 
 echo "Create dist/"
 sudo rm -rf dist
 mkdir dist
 
 echo "Create executables with pyinstaller"
-pip install pyinstaller==4.2
+pip install pyinstaller==4.9
 SPEC_FILE=$(python -c 'import cryptodoge; print(cryptodoge.PYINSTALLER_SPEC_PATH)')
 pyinstaller --log-level=INFO "$SPEC_FILE"
 LAST_EXIT_CODE=$?
@@ -30,13 +33,15 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	echo >&2 "pyinstaller failed!"
 	exit $LAST_EXIT_CODE
 fi
-cp -r dist/daemon ../cryptodoge-gui
+cp -r dist/daemon ../cryptodoge-gui/packages/gui
 cd .. || exit
 cd cryptodoge-gui || exit
 
 echo "npm build"
-npm install
-npm audit fix
+lerna clean -y
+npm ci
+# Audit fix does not currently work with Lerna. See https://github.com/lerna/lerna/issues/1663
+# npm audit fix
 npm run build
 LAST_EXIT_CODE=$?
 if [ "$LAST_EXIT_CODE" -ne 0 ]; then
@@ -44,18 +49,30 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	exit $LAST_EXIT_CODE
 fi
 
-electron-packager . cryptodoge --asar.unpack="**/daemon/**" --platform=darwin \
---icon=src/assets/img/cryptodoge.icns --overwrite --app-bundle-id=net.cryptodoge.blockchain \
+# Change to the gui package
+cd packages/gui || exit
+
+# sets the version for cryptodoge in package.json
+brew install jq
+cp package.json package.json.orig
+jq --arg VER "$CRYPTODOGE_INSTALLER_VERSION" '.version=$VER' package.json > temp.json && mv temp.json package.json
+
+electron-packager . Cryptodoge --asar.unpack="**/daemon/**" --platform=darwin \
+--icon=src/assets/img/Cryptodoge.icns --overwrite --app-bundle-id=net.cryptodoge.blockchain \
 --appVersion=$CRYPTODOGE_INSTALLER_VERSION
 LAST_EXIT_CODE=$?
+
+# reset the package.json to the original
+mv package.json.orig package.json
+
 if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	echo >&2 "electron-packager failed!"
 	exit $LAST_EXIT_CODE
 fi
 
-if [ "$NOTARIZE" ]; then
-  electron-osx-sign Cryptodoge-darwin-x64/cryptodoge.app --platform=darwin \
-  --hardened-runtime=true --provisioning-profile=chiablockchain.provisionprofile \
+if [ "$NOTARIZE" == true ]; then
+  electron-osx-sign Cryptodoge-darwin-x64/Cryptodoge.app --platform=darwin \
+  --hardened-runtime=true --provisioning-profile=cryptodoge.provisionprofile \
   --entitlements=entitlements.mac.plist --entitlements-inherit=entitlements.mac.plist \
   --no-gatekeeper-assess
 fi
@@ -65,21 +82,20 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	exit $LAST_EXIT_CODE
 fi
 
-mv Cryptodoge-darwin-x64 ../build_scripts/dist/
-cd ../build_scripts || exit
+mv Cryptodoge-darwin-x64 ../../../build_scripts/dist/
+cd ../../../build_scripts || exit
 
 DMG_NAME="Cryptodoge-$CRYPTODOGE_INSTALLER_VERSION.dmg"
 echo "Create $DMG_NAME"
 mkdir final_installer
-electron-installer-dmg dist/Cryptodoge-darwin-x64/cryptodoge.app Cryptodoge-$CRYPTODOGE_INSTALLER_VERSION \
---overwrite --out final_installer
+NODE_PATH=./npm_macos/node_modules node build_dmg.js dist/Cryptodoge-darwin-x64/Cryptodoge.app $CRYPTODOGE_INSTALLER_VERSION
 LAST_EXIT_CODE=$?
 if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	echo >&2 "electron-installer-dmg failed!"
 	exit $LAST_EXIT_CODE
 fi
 
-if [ "$NOTARIZE" ]; then
+if [ "$NOTARIZE" == true ]; then
 	echo "Notarize $DMG_NAME on ci"
 	cd final_installer || exit
   notarize-cli --file=$DMG_NAME --bundle-id net.cryptodoge.blockchain \

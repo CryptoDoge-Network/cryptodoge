@@ -4,10 +4,10 @@
 # from secrets import token_bytes
 # import aiosqlite
 # import pytest
-# from cryprotdoge.util.ints import uint32, uint64, uint128
-# from cryprotdoge.wallet.wallet_coin_record import WalletCoinRecord
-# from cryprotdoge.wallet.util.wallet_types import WalletType
-# from cryprotdoge.types.coin import Coin
+# from cryptodoge.util.ints import uint32, uint64, uint128
+# from cryptodoge.wallet.wallet_coin_record import WalletCoinRecord
+# from cryptodoge.wallet.util.wallet_types import WalletType
+# from cryptodoge.types.coin import Coin
 #
 #
 # @pytest.fixture(scope="module")

@@ -1,25 +1,21 @@
 import asyncio
 
 import pytest
+import pytest_asyncio
 
-from cryprotdoge.rpc.wallet_rpc_api import WalletRpcApi
-from cryprotdoge.simulator.simulator_protocol import FarmNewBlockProtocol
-from cryprotdoge.types.blockchain_format.coin import Coin
-from cryprotdoge.types.blockchain_format.sized_bytes import bytes32
-from cryprotdoge.types.mempool_inclusion_status import MempoolInclusionStatus
-from cryprotdoge.types.peer_info import PeerInfo
-from cryprotdoge.util.bech32m import encode_puzzle_hash
-from cryprotdoge.util.ints import uint16
-from cryprotdoge.wallet.util.wallet_types import WalletType
-from tests.setup_nodes import self_hostname, setup_simulators_and_wallets
+from cryptodoge.rpc.wallet_rpc_api import WalletRpcApi
+from cryptodoge.simulator.simulator_protocol import FarmNewBlockProtocol
+from cryptodoge.types.blockchain_format.coin import Coin
+from cryptodoge.types.blockchain_format.sized_bytes import bytes32
+from cryptodoge.types.mempool_inclusion_status import MempoolInclusionStatus
+from cryptodoge.types.peer_info import PeerInfo
+from cryptodoge.util.bech32m import encode_puzzle_hash
+from cryptodoge.util.ints import uint16
+from cryptodoge.wallet.transaction_record import TransactionRecord
+from cryptodoge.wallet.util.wallet_types import WalletType
+from tests.setup_nodes import setup_simulators_and_wallets
 from tests.time_out_assert import time_out_assert
 from tests.wallet.sync.test_wallet_sync import wallet_height_at_least
-
-
-@pytest.fixture(scope="module")
-def event_loop():
-    loop = asyncio.get_event_loop()
-    yield loop
 
 
 async def is_transaction_in_mempool(user_wallet_id, api, tx_id: bytes32) -> bool:
@@ -27,7 +23,7 @@ async def is_transaction_in_mempool(user_wallet_id, api, tx_id: bytes32) -> bool
         val = await api.get_transaction({"wallet_id": user_wallet_id, "transaction_id": tx_id.hex()})
     except ValueError:
         return False
-    for _, mis, _ in val["transaction"].sent_to:
+    for _, mis, _ in TransactionRecord.from_json_dict_convenience(val["transaction"]).sent_to:
         if (
             MempoolInclusionStatus(mis) == MempoolInclusionStatus.SUCCESS
             or MempoolInclusionStatus(mis) == MempoolInclusionStatus.PENDING
@@ -41,7 +37,7 @@ async def is_transaction_confirmed(user_wallet_id, api, tx_id: bytes32) -> bool:
         val = await api.get_transaction({"wallet_id": user_wallet_id, "transaction_id": tx_id.hex()})
     except ValueError:
         return False
-    return val["transaction"].confirmed
+    return TransactionRecord.from_json_dict_convenience(val["transaction"]).confirmed
 
 
 async def check_balance(api, wallet_id):
@@ -50,14 +46,16 @@ async def check_balance(api, wallet_id):
     return balance
 
 
-class TestRLWallet:
-    @pytest.fixture(scope="function")
-    async def three_wallet_nodes(self):
-        async for _ in setup_simulators_and_wallets(1, 3, {}):
-            yield _
+@pytest_asyncio.fixture(scope="function")
+async def three_wallet_nodes():
+    async for _ in setup_simulators_and_wallets(1, 3, {}):
+        yield _
 
+
+class TestRLWallet:
     @pytest.mark.asyncio
-    async def test_create_rl_coin(self, three_wallet_nodes):
+    @pytest.mark.skip
+    async def test_create_rl_coin(self, three_wallet_nodes, self_hostname):
         num_blocks = 4
         full_nodes, wallets = three_wallet_nodes
         full_node_api = full_nodes[0]
@@ -80,6 +78,7 @@ class TestRLWallet:
         val = await api_user.create_new_wallet(
             {"wallet_type": "rl_wallet", "rl_type": "user", "host": f"{self_hostname}:5000"}
         )
+        await asyncio.sleep(2)
         assert isinstance(val, dict)
         if "success" in val:
             assert val["success"]
@@ -111,6 +110,7 @@ class TestRLWallet:
         admin_wallet_id = val["id"]
         admin_pubkey = val["pubkey"]
         origin: Coin = val["origin"]
+        await asyncio.sleep(2)
 
         await api_user.rl_set_user_info(
             {
@@ -125,6 +125,7 @@ class TestRLWallet:
                 "admin_pubkey": admin_pubkey,
             }
         )
+        await asyncio.sleep(2)
 
         assert (await api_user.get_wallet_balance({"wallet_id": user_wallet_id}))["wallet_balance"][
             "confirmed_wallet_balance"
@@ -138,6 +139,7 @@ class TestRLWallet:
         address = encode_puzzle_hash(await receiving_wallet.get_new_puzzlehash(), "xcd")
         assert await receiving_wallet.get_spendable_balance() == 0
         val = await api_user.send_transaction({"wallet_id": user_wallet_id, "amount": 3, "fee": 2, "address": address})
+        await asyncio.sleep(2)
         assert "transaction_id" in val
         await time_out_assert(15, is_transaction_in_mempool, True, user_wallet_id, api_user, val["transaction_id"])
         for i in range(0, num_blocks):
@@ -149,6 +151,7 @@ class TestRLWallet:
 
         val = await api_admin.add_rate_limited_funds({"wallet_id": admin_wallet_id, "amount": 100, "fee": 7})
         assert val["status"] == "SUCCESS"
+        await asyncio.sleep(2)
         for i in range(0, 50):
             await full_node_api.farm_new_transaction_block(FarmNewBlockProtocol(32 * b"\0"))
         await time_out_assert(15, wallet_height_at_least, True, wallet_node, 68)
@@ -158,6 +161,7 @@ class TestRLWallet:
         val = await api_user.send_transaction(
             {"wallet_id": user_wallet_id, "amount": 105, "fee": 0, "address": puzzle_hash}
         )
+        await asyncio.sleep(2)
         await time_out_assert(15, is_transaction_in_mempool, True, user_wallet_id, api_user, val["transaction_id"])
         for i in range(0, num_blocks):
             await full_node_api.farm_new_transaction_block(FarmNewBlockProtocol(32 * b"\0"))
@@ -167,6 +171,7 @@ class TestRLWallet:
         assert await receiving_wallet.get_spendable_balance() == 108
 
         val = await api_admin.send_clawback_transaction({"wallet_id": admin_wallet_id, "fee": 11})
+        await asyncio.sleep(2)
         await time_out_assert(15, is_transaction_in_mempool, True, user_wallet_id, api_admin, val["transaction_id"])
         for i in range(0, num_blocks):
             await full_node_api.farm_new_transaction_block(FarmNewBlockProtocol(32 * b"\0"))

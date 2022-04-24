@@ -1,10 +1,10 @@
 from typing import Dict
 from unittest import TestCase
 
-from cryprotdoge.types.blockchain_format.program import Program, SerializedProgram
-from cryprotdoge.types.generator_types import GeneratorBlockCacheInterface
-from cryprotdoge.full_node.generator import create_block_generator, create_generator_args
-from cryprotdoge.util.ints import uint32
+from cryptodoge.types.blockchain_format.program import Program, SerializedProgram
+from cryptodoge.types.generator_types import GeneratorBlockCacheInterface
+from cryptodoge.full_node.generator import create_block_generator, create_generator_args
+from cryptodoge.util.ints import uint32
 
 gen0 = SerializedProgram.from_bytes(
     bytes.fromhex(

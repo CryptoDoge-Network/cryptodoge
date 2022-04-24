@@ -10,10 +10,12 @@ SERVICES_FOR_GROUP = {
     "timelord": "cryptodoge_timelord_launcher cryptodoge_timelord cryptodoge_full_node".split(),
     "timelord-only": "cryptodoge_timelord".split(),
     "timelord-launcher-only": "cryptodoge_timelord_launcher".split(),
-    "wallet": "cryptodoge_wallet cryptodoge_full_node".split(),
-    "wallet-only": "cryptodoge_wallet".split(),
+    "wallet": "cryptodoge_wallet".split(),
     "introducer": "cryptodoge_introducer".split(),
     "simulator": "cryptodoge_full_node_simulator".split(),
+    "crawler": "cryptodoge_crawler".split(),
+    "seeder": "cryptodoge_crawler cryptodoge_seeder".split(),
+    "seeder-only": "cryptodoge_seeder".split(),
 }
 
 

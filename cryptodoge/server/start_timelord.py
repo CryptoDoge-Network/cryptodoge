@@ -4,6 +4,7 @@ from typing import Dict
 
 from cryptodoge.consensus.constants import ConsensusConstants
 from cryptodoge.consensus.default_constants import DEFAULT_CONSTANTS
+from cryptodoge.rpc.timelord_rpc_api import TimelordRpcApi
 from cryptodoge.server.outbound_message import NodeType
 from cryptodoge.server.start_service import run_service
 from cryptodoge.timelord.timelord import Timelord
@@ -46,6 +47,10 @@ def service_kwargs_for_timelord(
         auth_connect_peers=False,
         network_id=network_id,
     )
+
+    if config.get("start_rpc_server", True):
+        kwargs["rpc_info"] = (TimelordRpcApi, config.get("rpc_port", 19557))
+
     return kwargs
 
 

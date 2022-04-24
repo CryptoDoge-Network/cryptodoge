@@ -6,23 +6,23 @@ from typing import Dict, List, Optional, Tuple
 import aiosqlite
 import pytest
 
-from cryprotdoge.consensus.block_header_validation import validate_finished_header_block
-from cryprotdoge.consensus.block_record import BlockRecord
-from cryprotdoge.consensus.blockchain import Blockchain
-from cryprotdoge.consensus.default_constants import DEFAULT_CONSTANTS
-from cryprotdoge.consensus.difficulty_adjustment import get_next_sub_slot_iters_and_difficulty
-from cryprotdoge.consensus.full_block_to_block_record import block_to_block_record
-from cryprotdoge.full_node.block_store import BlockStore
-from cryprotdoge.full_node.coin_store import CoinStore
-from cryprotdoge.server.start_full_node import SERVICE_NAME
-from cryprotdoge.types.blockchain_format.sized_bytes import bytes32
-from cryprotdoge.types.blockchain_format.sub_epoch_summary import SubEpochSummary
-from cryprotdoge.util.block_cache import BlockCache
+from cryptodoge.consensus.block_header_validation import validate_finished_header_block
+from cryptodoge.consensus.block_record import BlockRecord
+from cryptodoge.consensus.blockchain import Blockchain
+from cryptodoge.consensus.default_constants import DEFAULT_CONSTANTS
+from cryptodoge.consensus.difficulty_adjustment import get_next_sub_slot_iters_and_difficulty
+from cryptodoge.consensus.full_block_to_block_record import block_to_block_record
+from cryptodoge.full_node.block_store import BlockStore
+from cryptodoge.full_node.coin_store import CoinStore
+from cryptodoge.server.start_full_node import SERVICE_NAME
+from cryptodoge.types.blockchain_format.sized_bytes import bytes32
+from cryptodoge.types.blockchain_format.sub_epoch_summary import SubEpochSummary
+from cryptodoge.util.block_cache import BlockCache
 from tests.block_tools import test_constants
-from cryprotdoge.util.config import load_config
-from cryprotdoge.util.default_root import DEFAULT_ROOT_PATH
-from cryprotdoge.util.generator_tools import get_block_header
-from tests.setup_nodes import bt
+from cryptodoge.util.config import load_config
+from cryptodoge.util.default_root import DEFAULT_ROOT_PATH
+from cryptodoge.util.generator_tools import get_block_header
+
 
 try:
     from reprlib import repr
@@ -30,29 +30,16 @@ except ImportError:
     pass
 
 
-from cryprotdoge.consensus.pot_iterations import calculate_iterations_quality
-from cryprotdoge.full_node.weight_proof import (  # type: ignore
+from cryptodoge.consensus.pot_iterations import calculate_iterations_quality
+from cryptodoge.full_node.weight_proof import (
     WeightProofHandler,
     _map_sub_epoch_summaries,
     _validate_sub_epoch_segments,
     _validate_summaries_weight,
 )
-from cryprotdoge.types.full_block import FullBlock
-from cryprotdoge.types.header_block import HeaderBlock
-from cryprotdoge.util.ints import uint32, uint64
-from tests.core.fixtures import (
-    default_400_blocks,
-    default_1000_blocks,
-    default_10000_blocks,
-    default_10000_blocks_compact,
-    pre_genesis_empty_slots_1000_blocks,
-)
-
-
-@pytest.fixture(scope="session")
-def event_loop():
-    loop = asyncio.get_event_loop()
-    yield loop
+from cryptodoge.types.full_block import FullBlock
+from cryptodoge.types.header_block import HeaderBlock
+from cryptodoge.util.ints import uint32, uint64
 
 
 def count_sub_epochs(blockchain, last_hash) -> int:
@@ -120,8 +107,15 @@ async def load_blocks_dont_validate(
             cc_sp,
         )
 
+        # TODO: address hint error and remove ignore
+        #       error: Argument 2 to "BlockCache" has incompatible type "Dict[uint32, bytes32]"; expected
+        #       "Optional[Dict[bytes32, HeaderBlock]]"  [arg-type]
         sub_block = block_to_block_record(
-            test_constants, BlockCache(sub_blocks, height_to_hash), required_iters, block, None
+            test_constants,
+            BlockCache(sub_blocks, height_to_hash),  # type: ignore[arg-type]
+            required_iters,
+            block,
+            None,
         )
         sub_blocks[block.header_hash] = sub_block
         height_to_hash[block.height] = block.header_hash
@@ -201,7 +195,7 @@ class TestWeightProof:
         assert wp is not None
 
     @pytest.mark.asyncio
-    async def test_weight_proof_edge_cases(self, default_400_blocks):
+    async def test_weight_proof_edge_cases(self, bt, default_400_blocks):
         blocks: List[FullBlock] = default_400_blocks
 
         blocks: List[FullBlock] = bt.get_consecutive_blocks(
@@ -377,7 +371,7 @@ class TestWeightProof:
         assert fork_point == 0
 
     @pytest.mark.asyncio
-    async def test_weight_proof1000_partial_blocks_compact(self, default_10000_blocks_compact):
+    async def test_weight_proof1000_partial_blocks_compact(self, bt, default_10000_blocks_compact):
         blocks: List[FullBlock] = bt.get_consecutive_blocks(
             100,
             block_list_input=default_10000_blocks_compact,

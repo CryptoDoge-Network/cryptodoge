@@ -2,16 +2,16 @@ from collections import defaultdict
 from dataclasses import dataclass, replace
 from typing import Dict, Iterator, Optional
 
-from cryprotdoge.util.condition_tools import created_outputs_for_conditions_dict
-from cryprotdoge.full_node.mempool_check_conditions import mempool_check_conditions_dict, get_name_puzzle_conditions
-from cryprotdoge.types.blockchain_format.coin import Coin
-from cryprotdoge.types.blockchain_format.sized_bytes import bytes32
-from cryprotdoge.types.coin_record import CoinRecord
-from cryprotdoge.types.spend_bundle import SpendBundle
-from cryprotdoge.util.ints import uint32, uint64
-from cryprotdoge.full_node.bundle_tools import simple_solution_generator
-from cryprotdoge.util.errors import Err
-from cryprotdoge.consensus.cost_calculator import NPCResult
+from cryptodoge.util.condition_tools import created_outputs_for_conditions_dict
+from cryptodoge.full_node.mempool_check_conditions import mempool_check_conditions_dict, get_name_puzzle_conditions
+from cryptodoge.types.blockchain_format.coin import Coin
+from cryptodoge.types.blockchain_format.sized_bytes import bytes32
+from cryptodoge.types.coin_record import CoinRecord
+from cryptodoge.types.spend_bundle import SpendBundle
+from cryptodoge.util.ints import uint32, uint64
+from cryptodoge.full_node.bundle_tools import simple_solution_generator
+from cryptodoge.util.errors import Err
+from cryptodoge.consensus.cost_calculator import NPCResult
 
 
 MAX_COST = 11000000000
@@ -64,7 +64,9 @@ class CoinStore:
         # this should use blockchain consensus code
 
         program = simple_solution_generator(spend_bundle)
-        result: NPCResult = get_name_puzzle_conditions(program, max_cost, cost_per_byte=cost_per_byte, safe_mode=True)
+        result: NPCResult = get_name_puzzle_conditions(
+            program, max_cost, cost_per_byte=cost_per_byte, mempool_mode=True
+        )
         if result.error is not None:
             raise BadSpendBundleError(f"condition validation failure {Err(result.error)}")
 
@@ -76,7 +78,6 @@ class CoinStore:
                     coin,
                     uint32(now.height),
                     uint32(0),
-                    False,
                     False,
                     uint64(now.seconds),
                 )
@@ -115,7 +116,7 @@ class CoinStore:
         for spent_coin in removals:
             coin_name = spent_coin.name()
             coin_record = self._db[coin_name]
-            self._db[coin_name] = replace(coin_record, spent_block_index=now.height, spent=True)
+            self._db[coin_name] = replace(coin_record, spent_block_index=now.height)
         return additions, spend_bundle.coin_spends
 
     def coins_for_puzzle_hash(self, puzzle_hash: bytes32) -> Iterator[Coin]:
@@ -140,7 +141,6 @@ class CoinStore:
             coin,
             uint32(birthday.height),
             uint32(0),
-            False,
             False,
             uint64(birthday.seconds),
         )

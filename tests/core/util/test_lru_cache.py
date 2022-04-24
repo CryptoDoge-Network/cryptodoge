@@ -1,6 +1,6 @@
 import unittest
 
-from cryprotdoge.util.lru_cache import LRUCache
+from cryptodoge.util.lru_cache import LRUCache
 
 
 class TestLRUCache(unittest.TestCase):

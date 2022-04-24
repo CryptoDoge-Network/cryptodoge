@@ -1,38 +1,44 @@
 # flake8: noqa: F811, F401
 import logging
+from typing import List
 
 import pytest
+import pytest_asyncio
 from blspy import AugSchemeMPL
 
-from cryprotdoge.consensus.pot_iterations import is_overflow_block
-from cryprotdoge.full_node.signage_point import SignagePoint
-from cryprotdoge.protocols import full_node_protocol
-from cryprotdoge.rpc.full_node_rpc_api import FullNodeRpcApi
-from cryprotdoge.rpc.full_node_rpc_client import FullNodeRpcClient
-from cryprotdoge.rpc.rpc_server import NodeType, start_rpc_server
-from cryprotdoge.simulator.simulator_protocol import FarmNewBlockProtocol
-from cryprotdoge.types.spend_bundle import SpendBundle
-from cryprotdoge.types.unfinished_block import UnfinishedBlock
+from cryptodoge.consensus.pot_iterations import is_overflow_block
+from cryptodoge.full_node.signage_point import SignagePoint
+from cryptodoge.protocols import full_node_protocol
+from cryptodoge.rpc.full_node_rpc_api import FullNodeRpcApi
+from cryptodoge.rpc.full_node_rpc_client import FullNodeRpcClient
+from cryptodoge.rpc.rpc_server import NodeType, start_rpc_server
+from cryptodoge.simulator.simulator_protocol import FarmNewBlockProtocol, ReorgProtocol
+from cryptodoge.types.full_block import FullBlock
+from cryptodoge.types.spend_bundle import SpendBundle
+from cryptodoge.types.unfinished_block import UnfinishedBlock
 from tests.block_tools import get_signage_point
-from cryprotdoge.util.hash import std_hash
-from cryprotdoge.util.ints import uint16, uint8
+from cryptodoge.util.hash import std_hash
+from cryptodoge.util.ints import uint16, uint8
+from tests.blockchain.blockchain_test_utils import _validate_and_add_block
 from tests.wallet_tools import WalletTool
 from tests.connection_utils import connect_and_get_peer
-from tests.setup_nodes import bt, self_hostname, setup_simulators_and_wallets, test_constants
+from tests.setup_nodes import setup_simulators_and_wallets, test_constants
 from tests.time_out_assert import time_out_assert
-from tests.core.fixtures import empty_blockchain
+from tests.util.rpc import validate_get_routes
+from tests.util.socket import find_available_listen_port
+
+
+@pytest_asyncio.fixture(scope="function")
+async def two_nodes():
+    async for _ in setup_simulators_and_wallets(2, 0, {}):
+        yield _
 
 
 class TestRpc:
-    @pytest.fixture(scope="function")
-    async def two_nodes(self):
-        async for _ in setup_simulators_and_wallets(2, 0, {}):
-            yield _
-
     @pytest.mark.asyncio
-    async def test1(self, two_nodes):
+    async def test1(self, two_nodes, bt, self_hostname):
         num_blocks = 5
-        test_rpc_port = uint16(21522)
+        test_rpc_port = find_available_listen_port()
         nodes, _ = two_nodes
         full_node_api_1, full_node_api_2 = nodes
         server_1 = full_node_api_1.full_node.server
@@ -61,6 +67,7 @@ class TestRpc:
 
         try:
             client = await FullNodeRpcClient.create(self_hostname, test_rpc_port, bt.root_path, config)
+            await validate_get_routes(client, full_node_rpc_api)
             state = await client.get_blockchain_state()
             assert state["peak"] is None
             assert not state["sync"]["sync_mode"]
@@ -203,6 +210,21 @@ class TestRpc:
             assert len(await client.get_connections(NodeType.FARMER)) == 0
             await client.close_connection(connections[0]["node_id"])
             await time_out_assert(10, num_connections, 0)
+
+            blocks: List[FullBlock] = await client.get_blocks(0, 5)
+            assert len(blocks) == 5
+
+            await full_node_api_1.reorg_from_index_to_new_index(ReorgProtocol(2, 55, bytes([0x2] * 32)))
+            new_blocks_0: List[FullBlock] = await client.get_blocks(0, 5)
+            assert len(new_blocks_0) == 7
+
+            new_blocks: List[FullBlock] = await client.get_blocks(0, 5, exclude_reorged=True)
+            assert len(new_blocks) == 5
+            assert blocks[0].header_hash == new_blocks[0].header_hash
+            assert blocks[1].header_hash == new_blocks[1].header_hash
+            assert blocks[2].header_hash == new_blocks[2].header_hash
+            assert blocks[3].header_hash != new_blocks[3].header_hash
+
         finally:
             # Checks that the RPC manages to stop the node
             client.close()
@@ -210,14 +232,18 @@ class TestRpc:
             await rpc_cleanup()
 
     @pytest.mark.asyncio
-    async def test_signage_points(self, two_nodes, empty_blockchain):
-        test_rpc_port = uint16(21522)
+    async def test_signage_points(self, two_nodes, empty_blockchain, bt):
+        test_rpc_port = find_available_listen_port()
         nodes, _ = two_nodes
         full_node_api_1, full_node_api_2 = nodes
         server_1 = full_node_api_1.full_node.server
         server_2 = full_node_api_2.full_node.server
 
-        peer = await connect_and_get_peer(server_1, server_2)
+        config = bt.config
+        self_hostname = config["self_hostname"]
+        daemon_port = config["daemon_port"]
+
+        peer = await connect_and_get_peer(server_1, server_2, self_hostname)
 
         def stop_node_cb():
             full_node_api_1._close()
@@ -225,13 +251,9 @@ class TestRpc:
 
         full_node_rpc_api = FullNodeRpcApi(full_node_api_1.full_node)
 
-        config = bt.config
-        hostname = config["self_hostname"]
-        daemon_port = config["daemon_port"]
-
         rpc_cleanup = await start_rpc_server(
             full_node_rpc_api,
-            hostname,
+            self_hostname,
             daemon_port,
             test_rpc_port,
             stop_node_cb,
@@ -265,7 +287,7 @@ class TestRpc:
             second_blockchain = empty_blockchain
 
             for block in blocks:
-                await second_blockchain.receive_block(block)
+                await _validate_and_add_block(second_blockchain, block)
 
             # Creates a signage point based on the last block
             peak_2 = second_blockchain.get_peak()

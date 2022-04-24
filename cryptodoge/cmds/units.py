@@ -4,6 +4,6 @@ from typing import Dict
 # Only use these units for user facing interfaces.
 units: Dict[str, int] = {
     "cryptodoge": 10 ** 6,  # 1 cryptodoge (XCD) is 1,000,000 mojo (1 million)
-    "mojo:": 1,
-    "colouredcoin": 10 ** 3,  # 1 coloured coin is 1000 colouredcoin mojos
+    "mojo": 1,
+    "cat": 10 ** 3,  # 1 CAT is 1000 CAT mojos
 }

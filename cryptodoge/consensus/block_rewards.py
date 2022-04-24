@@ -41,10 +41,11 @@ def calculate_pool_reward(height: uint32) -> uint64:
     else:
         return uint64(0)
 
+
 def calculate_base_farmer_reward(height: uint32) -> uint64:
     """
     Returns the base farmer reward at a certain block height.
-    The base fee reward is 3/8 of total block reward
+    The base fee reward is 1/8 of total block reward
 
     Returns the coinbase reward at a certain block height. These halving events will not be hit at the exact times
     (3 years, etc), due to fluctuations in difficulty. They will likely come early, if the network space and VDF
