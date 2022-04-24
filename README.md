@@ -1,7 +1,7 @@
 # CryptoDoge Coin
 
 ![Alt text](https://cryptodoge.cc/assets/img/cryptodoge.png)
-
+![Alt text](https://www.chia.net/img/chia_logo.svg)
 
 Cryptodoge is an open source peer-to-peer digital currency, created by chia project former developer and shiba community,favored by Shiba Inus worldwide.
 
