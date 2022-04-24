@@ -1,8 +1,3 @@
-[submodule "cryptodoge-gui"]
-	path = cryptodoge-gui
-	url = https://github.com/Cryptodoge-Network/cryptodoge-gui.git
-	branch = pools
 [submodule "mozilla-ca"]
 	path = mozilla-ca
-	url = https://github.com/Cryptodoge-Network/mozilla-ca.git
-        branch = main
+	url = https://github.com/CryptoDoge-Network/mozilla-ca.git
