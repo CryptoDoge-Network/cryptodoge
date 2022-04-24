@@ -1,7 +1,7 @@
 # CryptoDoge Coin
 
 ![Alt text](https://cryptodoge.cc/assets/img/cryptodoge.png)
-![Alt text](https://www.chia.net/img/chia_logo.svg)
+
 
 Cryptodoge is an open source peer-to-peer digital currency, created by chia project former developer and shiba community,favored by Shiba Inus worldwide.
 
@@ -16,14 +16,6 @@ Install instructions are available in the
 section of the
 [cryptodoge repository wiki](https://github.com/Cryptodoge-Network/cryptodoge/wiki).
 
-## Announcement
-Hey @all great farmers of ChiaDogecoin,cryptodoge coin has been successfully upgraded from chiadoge coin,please farm ahead to cryptodoge.If you had farm on chiadoge before,you can get 2X amount cryptodoge coins.please fill your address (Make sure it is the same on cryptodge and chiadoge)in this google form (If you had filled it, please don't fill it again)
-
-https://docs.google.com/forms/d/e/1FAIpQLSfpVeKf0YFEkZFCbRXIsUF8VB84kdszwhRv2tEJkLrPDa2upA/viewform
-and you can check send progress in this form
-
-https://docs.google.com/spreadsheets/d/1alfbpXpZWlMHDI8pcZLJV44OPn2pzl72pnEAXZa_ANs/edit#gid=909224258
-This usually takes a few days.If you havn't recive yours,please join discord and chat with us.
 
 ## Gamefi
 Congratulations on the release of Cryptodoge's Gamefi, come and play! Get the best NFT equipment.
