@@ -133,7 +133,7 @@ def configure(
 
             elif testnet == "false" or testnet == "f":
                 print("Setting Mainnet")
-                mainnet_port = "8444"
+                mainnet_port = "15994"
                 mainnet_introducer = "introducer.cryptodoge.cc"
                 mainnet_dns_introducer = "dns-introducer.cryptodoge.cc"
                 bootstrap_peers = ["node.cryptodoge.cc"]
