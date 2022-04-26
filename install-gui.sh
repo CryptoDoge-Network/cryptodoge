@@ -200,7 +200,7 @@ if [ ! "$CI" ]; then
   npm run build
 
   # Set modified output of `cryptodoge version` to version property of GUI's package.json
-  python ../installhelper.py
+  #python ../installhelper.py
 else
   echo "Skipping node.js in install.sh on MacOS ci."
 fi
