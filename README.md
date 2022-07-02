@@ -20,7 +20,9 @@ section of the
 ## Gamefi
 Congratulations on the release of Cryptodoge's Gamefi, come and play! Get the best NFT equipment.
 [play gamfi](https://gamefi.cryptodoge.cc).
-![Alt text](https://gamefi.cryptodoge.cc/assets/img/bg0.jpg)
+
+![Alt text](https://cryptodoge.cc/assets/img/bg1.jpg)
+![Alt text](https://cryptodoge.cc/assets/img/bg2.jpg)
 
 
 
